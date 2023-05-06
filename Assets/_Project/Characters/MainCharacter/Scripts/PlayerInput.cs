@@ -12,7 +12,7 @@ public class PlayerInput : CharacterInput
 
     public void OnButtonPress(int buttonType)
     {
-        if(!_canRead || !canRead) return;
+        if (!_canRead || !canRead) return;
 
         if (buttonType == 0)
         {
@@ -26,7 +26,7 @@ public class PlayerInput : CharacterInput
 
     private void Awake()
     {
-        _joystick = FindObjectOfType<FloatingJoystick>();
+        _joystick = GetComponentInChildren<FloatingJoystick>(true);
     }
 
     private void Update()

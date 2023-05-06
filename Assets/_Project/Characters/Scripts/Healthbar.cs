@@ -12,10 +12,10 @@ public class Healthbar : MonoBehaviour
     private Transform _parent;
     private Vector3 _offset;
 
-    private void Awake()
+    private void Start()
     {
         _healthBar = GetComponent<Slider>();
-        _health = _isWorldSpace ? GetComponentInParent<Health>() : GameObject.Find("Player").GetComponentInChildren<Health>();
+        _health = GetComponentInParent<EntityInfo>().GetComponentInChildren<Health>();
         _virtualCam = GameObject.Find("VirtualCam").transform;
         _parent = transform.parent.parent;
         _offset = transform.parent.localPosition;

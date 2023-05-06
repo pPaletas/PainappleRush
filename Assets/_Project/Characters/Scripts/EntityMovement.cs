@@ -73,7 +73,7 @@ public class EntityMovement : MonoBehaviour
         dashCurrentTime = 0f;
         dashDirection = Vector3.zero;
         canMove = true && enableMovementOnFinish;
-        parentInfo.PhysicAnimator.ResetTrigger(anim_Dash);
+        if (!parentInfo.isMultiplayer || (parentInfo.PlrNetwork.Photonview.IsMine)) parentInfo.PhysicAnimator.ResetTrigger(anim_Dash);
 
         _dashCooldown.StartTimer();
     }
@@ -135,7 +135,7 @@ public class EntityMovement : MonoBehaviour
             Vector3 dashDir = usePivot ? input.MovementVector.normalized : (input.MovementVector - transform.position).normalized;
             if (dashDir.sqrMagnitude == 0f && _pivot) dashDir = _pivot.forward;
             Dash(dashDir, dashSpeed, dashTime, true);
-            parentInfo.PhysicAnimator.SetTrigger(anim_Dash);
+            if (!parentInfo.isMultiplayer || (parentInfo.PlrNetwork.Photonview.IsMine)) parentInfo.PhysicAnimator.SetTrigger(anim_Dash);
             _dashing = true;
         }
     }

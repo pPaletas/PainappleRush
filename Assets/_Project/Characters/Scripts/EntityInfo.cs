@@ -5,6 +5,8 @@ using UnityEngine.AI;
 
 public class EntityInfo : MonoBehaviour
 {
+    public bool isMultiplayer = false;
+
     // Timers
     private Timer _dashCooldownTimer;
     private Timer _dashTimer;
@@ -15,6 +17,7 @@ public class EntityInfo : MonoBehaviour
     private Transform _pivot;
 
     // Others
+    private PlayerNetworkManager _plrNetwork;
     private CharacterInput _input;
     private GameObject _char;
     private Rigidbody _rb;
@@ -38,6 +41,7 @@ public class EntityInfo : MonoBehaviour
     public Transform Pivot { get => _pivot; }
 
     // Others
+    public PlayerNetworkManager PlrNetwork { get => _plrNetwork; }
     public GameObject Char { get => _char; }
     public Rigidbody Rb { get => _rb; }
     public RagdollSystem Ragdoll { get => _ragdoll; }
@@ -63,6 +67,7 @@ public class EntityInfo : MonoBehaviour
         _pivot = transform.Find("Character/Pivot");
 
         // Others
+        _plrNetwork = GetComponent<PlayerNetworkManager>();
         _input = GetComponent<CharacterInput>();
         _char = transform.Find("Character").gameObject;
         _hurtbox = GetComponentInChildren<Hurtbox>().GetComponent<CapsuleCollider>();

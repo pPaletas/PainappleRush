@@ -8,7 +8,7 @@ public class PlayerRagdoll : RagdollSystem
         entityInfo.Input.canRead = false;
         entityInfo.CharacterCollider.enabled = false;
         spine.transform.SetParent(null);
-        entityInfo.CharacterController.enabled = false;
+        if (entityInfo.PlrNetwork.Photonview.IsMine) entityInfo.CharacterController.enabled = false;
     }
 
     protected override bool WakeUp()
@@ -42,7 +42,7 @@ public class PlayerRagdoll : RagdollSystem
         entityInfo.Input.canRead = true;
         entityInfo.CharacterCollider.enabled = true;
         entityInfo.Hurtbox.enabled = true;
-        entityInfo.CharacterController.enabled = true;
+        if (entityInfo.PlrNetwork.Photonview.IsMine) entityInfo.CharacterController.enabled = true;
 
         base.StopRagdoll();
     }

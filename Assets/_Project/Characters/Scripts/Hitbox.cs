@@ -43,17 +43,20 @@ public class Hitbox : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        HitData newData = new HitData
+        if (_playerInfo.PlrNetwork.Photonview.IsMine)
         {
-            damage = _damage,
-            pushType = _pushType,
-            force = GetForceDirection() * _force,
-            info = _playerInfo
-        };
+            HitData newData = new HitData
+            {
+                damage = _damage,
+                pushType = _pushType,
+                force = GetForceDirection() * _force,
+                info = _playerInfo
+            };
 
-        if (other.TryGetComponent<Hurtbox>(out Hurtbox hurtbox) && hurtbox.EntityInfo != _playerInfo)
-        {
-            hurtbox.Hurt(newData);
+            if (other.TryGetComponent<Hurtbox>(out Hurtbox hurtbox) && hurtbox.EntityInfo != _playerInfo)
+            {
+                hurtbox.Hurt(newData);
+            }
         }
     }
 }

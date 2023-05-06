@@ -2,7 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PunchCombo : MonoBehaviour
+public interface IRemoteCallable
+{
+    public void RemoteInvoke(object[] parameters);
+}
+
+public class PunchCombo : MonoBehaviour, IRemoteCallable
 {
     [SerializeField] private float _dashSpeed = 50f;
     [SerializeField] private float _dashTime = 0.2f;
@@ -26,6 +31,28 @@ public class PunchCombo : MonoBehaviour
     private int _animPunchHash = Animator.StringToHash("Punch");
     private int _animDashPunch = Animator.StringToHash("DashPunch");
     private int _animInComboHash = Animator.StringToHash("IsInCombo");
+
+    public void RemoteInvoke(params object[] parameters)
+    {
+        int colliderIndex = (int)parameters[0];
+        bool active = (bool)parameters[1];
+
+        switch (colliderIndex)
+        {
+            case 0:
+                _punchHitbox.SetActive(active);
+                break;
+            case 1:
+                _sweepHitbox.SetActive(active);
+                break;
+            case 2:
+                _dashPunchHitbox.SetActive(active);
+                break;
+            case 3:
+                _dashHitbox.SetActive(active);
+                break;
+        }
+    }
 
     private void ReadInput()
     {
@@ -56,6 +83,12 @@ public class PunchCombo : MonoBehaviour
         SetMovement(true);
     }
 
+    private void SetCollider(int index, bool active)
+    {
+        if (!_parentInfo.isMultiplayer) _punchHitbox.SetActive(active);
+        else _parentInfo.PlrNetwork.RemoteCall(this, index, active);
+    }
+
     #region Listeners
     private void AnimationStarted(int anim)
     {
@@ -77,28 +110,28 @@ public class PunchCombo : MonoBehaviour
     {
         if (anim < 5)
         {
-            _punchHitbox.SetActive(true);
+            SetCollider(0, true);
         }
         else if (anim == 5)
         {
-            _sweepHitbox.SetActive(true);
+            SetCollider(1, true);
         }
         else if (anim == 6)
         {
-            _dashPunchHitbox.SetActive(true);
+            SetCollider(2, true);
         }
         else if (anim == 7)
         {
-            _dashHitbox.SetActive(true);
+            SetCollider(3, true);
         }
     }
 
     private void HitPointEnded(int anim)
     {
-        _punchHitbox.SetActive(false);
-        _sweepHitbox.SetActive(false);
-        _dashPunchHitbox.SetActive(false);
-        _dashHitbox.SetActive(false);
+        SetCollider(0, false);
+        SetCollider(1, false);
+        SetCollider(2, false);
+        SetCollider(3, false);
     }
     #endregion
 
@@ -152,4 +185,5 @@ public class PunchCombo : MonoBehaviour
         _animListener.onHitPointReach -= HitPointReached;
         _animListener.onHitPointEnd -= HitPointEnded;
     }
+
 }
