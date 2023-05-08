@@ -17,7 +17,6 @@ public class Hurtbox : MonoBehaviour
 
         if (hitdata.pushType == 0)
         {
-            // _movement.Dash(info.Pivot.forward, 30f, 0.05f);
             _entityInfo.Ragdoll.Push(hitdata.force, 0.8f);
         }
         else

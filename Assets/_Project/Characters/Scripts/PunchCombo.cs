@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using Photon.Pun;
 using UnityEngine;
 
 public interface IRemoteCallable
 {
+    public string Name { get; }
     public void RemoteInvoke(object[] parameters);
 }
 
@@ -24,7 +26,6 @@ public class PunchCombo : MonoBehaviour, IRemoteCallable
     private GameObject _punchHitbox;
     private GameObject _sweepHitbox;
     private GameObject _dashPunchHitbox;
-    private GameObject _dashHitbox;
     private bool _isInCombo = false;
 
     // Animator
@@ -32,26 +33,41 @@ public class PunchCombo : MonoBehaviour, IRemoteCallable
     private int _animDashPunch = Animator.StringToHash("DashPunch");
     private int _animInComboHash = Animator.StringToHash("IsInCombo");
 
-    public void RemoteInvoke(params object[] parameters)
-    {
-        int colliderIndex = (int)parameters[0];
-        bool active = (bool)parameters[1];
+    public string Name => "PunchCombo";
 
-        switch (colliderIndex)
+    public void RemoteInvoke(object[] parameters)
+    {
+        int type = (int)parameters[0];
+
+        if (type == 0)
         {
-            case 0:
-                _punchHitbox.SetActive(active);
-                break;
-            case 1:
-                _sweepHitbox.SetActive(active);
-                break;
-            case 2:
-                _dashPunchHitbox.SetActive(active);
-                break;
-            case 3:
-                _dashHitbox.SetActive(active);
-                break;
+            int colliderIndex = (int)parameters[1];
+            bool active = (bool)parameters[2];
+
+            switch (colliderIndex)
+            {
+                case 0:
+                    _punchHitbox.SetActive(active);
+                    break;
+                case 1:
+                    _sweepHitbox.SetActive(active);
+                    break;
+                case 2:
+                    _dashPunchHitbox.SetActive(active);
+                    break;
+            }
         }
+        else
+        {
+            // Le hacemos evento mas bien a esa baina del trigger, porque sino no funciona el malparetas ese
+            _anim.SetTrigger((int)parameters[1]);
+        }
+    }
+
+    protected bool IsSingleOrOwner()
+    {
+        bool isMultiplayer = _parentInfo.isMultiplayer;
+        return !isMultiplayer || (_parentInfo.PlrNetwork.Photonview.IsMine);
     }
 
     private void ReadInput()
@@ -66,7 +82,10 @@ public class PunchCombo : MonoBehaviour, IRemoteCallable
     {
         if (_parentInfo.PunchComboCooldown.IsStopped && !_movement.Dashing)
         {
-            _anim.SetTrigger(_animPunchHash);
+            if (!_parentInfo.isMultiplayer) _anim.SetTrigger(_animPunchHash);
+            else _parentInfo.PlrNetwork.RemoteCall(Name, 1, _animPunchHash);
+
+
             isPunching = true;
         }
         else if (_movement.Dashing)
@@ -85,8 +104,20 @@ public class PunchCombo : MonoBehaviour, IRemoteCallable
 
     private void SetCollider(int index, bool active)
     {
-        if (!_parentInfo.isMultiplayer) _punchHitbox.SetActive(active);
-        else _parentInfo.PlrNetwork.RemoteCall(this, index, active);
+        // if (!_parentInfo.isMultiplayer)
+        switch (index)
+        {
+            case 0:
+                _punchHitbox.SetActive(active);
+                break;
+            case 1:
+                _sweepHitbox.SetActive(active);
+                break;
+            case 2:
+                _dashPunchHitbox.SetActive(active);
+                break;
+        }
+        // else if (_parentInfo.PlrNetwork.Photonview.IsMine) _parentInfo.PlrNetwork.RemoteCall(Name, 0, index, active);
     }
 
     #region Listeners
@@ -120,10 +151,6 @@ public class PunchCombo : MonoBehaviour, IRemoteCallable
         {
             SetCollider(2, true);
         }
-        else if (anim == 7)
-        {
-            SetCollider(3, true);
-        }
     }
 
     private void HitPointEnded(int anim)
@@ -131,7 +158,6 @@ public class PunchCombo : MonoBehaviour, IRemoteCallable
         SetCollider(0, false);
         SetCollider(1, false);
         SetCollider(2, false);
-        SetCollider(3, false);
     }
     #endregion
 
@@ -163,13 +189,16 @@ public class PunchCombo : MonoBehaviour, IRemoteCallable
         _punchHitbox = transform.Find("Pivot/Hitboxes/PunchHitbox").gameObject;
         _sweepHitbox = transform.Find("Pivot/Hitboxes/SweepHitbox").gameObject;
         _dashPunchHitbox = transform.Find("Pivot/Hitboxes/DashPunchHitbox").gameObject;
-        _dashHitbox = transform.Find("Pivot/Hitboxes/DashHitbox").gameObject;
 
         // Animation stuff
-        _animListener.onAnimationStarted += AnimationStarted;
-        _animListener.onAnimationEnded += AnimationEnded;
-        _animListener.onHitPointReach += HitPointReached;
-        _animListener.onHitPointEnd += HitPointEnded;
+        // Aseguremonos de que los eventos solo sean llamados desde el cliente (owner)
+        if (IsSingleOrOwner())
+        {
+            _animListener.onAnimationStarted += AnimationStarted;
+            _animListener.onAnimationEnded += AnimationEnded;
+            _animListener.onHitPointReach += HitPointReached;
+            _animListener.onHitPointEnd += HitPointEnded;
+        }
     }
 
     private void Update()
@@ -180,10 +209,12 @@ public class PunchCombo : MonoBehaviour, IRemoteCallable
 
     private void OnDisable()
     {
-        _animListener.onAnimationStarted -= AnimationStarted;
-        _animListener.onAnimationEnded -= AnimationEnded;
-        _animListener.onHitPointReach -= HitPointReached;
-        _animListener.onHitPointEnd -= HitPointEnded;
+        if (IsSingleOrOwner())
+        {
+            _animListener.onAnimationStarted -= AnimationStarted;
+            _animListener.onAnimationEnded -= AnimationEnded;
+            _animListener.onHitPointReach -= HitPointReached;
+            _animListener.onHitPointEnd -= HitPointEnded;
+        }
     }
-
 }

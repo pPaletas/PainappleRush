@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class EntityMovement : MonoBehaviour
+public class EntityMovement : MonoBehaviour, IRemoteCallable
 {
     [SerializeField] private float _speed = 5f;
     [SerializeField] private float _rotationSmoothness = 15f;
@@ -28,6 +28,7 @@ public class EntityMovement : MonoBehaviour
     // Children
     private Transform _pivot;
     private Timer _dashCooldown;
+    private GameObject _dashHitbox;
 
     // Animator
     protected int anim_isRunning = Animator.StringToHash("IsRunning");
@@ -36,6 +37,13 @@ public class EntityMovement : MonoBehaviour
     private bool _dashing = false;
 
     public bool Dashing { get => _dashing; }
+
+    public string Name => "EnemyMovement";
+
+    public void RemoteInvoke(object[] parameters)
+    {
+        _dashHitbox.SetActive((bool)parameters[0]);
+    }
 
     public void SetPivotForward(Vector3 normalized)
     {
@@ -50,7 +58,7 @@ public class EntityMovement : MonoBehaviour
 
     public void Dash(Vector3 direction, float speed, float time, bool enableMovementOnFinish = false)
     {
-        if (!isDashing)
+        if (!isDashing && IsSingleOrOwner())
         {
             isDashing = true;
             dashCurrentSpeed = speed;
@@ -66,6 +74,12 @@ public class EntityMovement : MonoBehaviour
 
     public virtual void SetSpeed(float speed) { }
 
+    protected bool IsSingleOrOwner()
+    {
+        bool isMultiplayer = parentInfo.isMultiplayer;
+        return !isMultiplayer || (parentInfo.PlrNetwork.Photonview.IsMine);
+    }
+
     protected virtual void StopDash()
     {
         isDashing = false;
@@ -74,6 +88,18 @@ public class EntityMovement : MonoBehaviour
         dashDirection = Vector3.zero;
         canMove = true && enableMovementOnFinish;
         if (!parentInfo.isMultiplayer || (parentInfo.PlrNetwork.Photonview.IsMine)) parentInfo.PhysicAnimator.ResetTrigger(anim_Dash);
+
+        if (IsSingleOrOwner())
+        {
+            if (parentInfo.isMultiplayer)
+            {
+                parentInfo.PlrNetwork.RemoteCall(Name, false);
+            }
+            else
+            {
+                _dashHitbox.SetActive(false);
+            }
+        }
 
         _dashCooldown.StartTimer();
     }
@@ -88,6 +114,7 @@ public class EntityMovement : MonoBehaviour
         // Children
         _pivot = transform.Find("Pivot");
         _dashCooldown = parentInfo.DashCooldownTimer;
+        _dashHitbox = transform.Find("Pivot/Hitboxes/DashHitbox").gameObject;
     }
 
     protected virtual void Update()
@@ -134,8 +161,23 @@ public class EntityMovement : MonoBehaviour
             // Recordar que el MovementVector de los enemigos, es la posición del jugador
             Vector3 dashDir = usePivot ? input.MovementVector.normalized : (input.MovementVector - transform.position).normalized;
             if (dashDir.sqrMagnitude == 0f && _pivot) dashDir = _pivot.forward;
+
             Dash(dashDir, dashSpeed, dashTime, true);
-            if (!parentInfo.isMultiplayer || (parentInfo.PlrNetwork.Photonview.IsMine)) parentInfo.PhysicAnimator.SetTrigger(anim_Dash);
+
+            if (IsSingleOrOwner())
+            {
+                parentInfo.PhysicAnimator.SetTrigger(anim_Dash);
+
+                if (parentInfo.isMultiplayer)
+                {
+                    parentInfo.PlrNetwork.RemoteCall(Name, true);
+                }
+                else
+                {
+                    _dashHitbox.SetActive(true);
+                }
+            }
+
             _dashing = true;
         }
     }

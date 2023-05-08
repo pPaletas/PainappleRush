@@ -13,7 +13,6 @@ namespace Photon.Pun
 {
     using UnityEngine;
 
-
     [RequireComponent(typeof(Rigidbody))]
     [AddComponentMenu("Photon Networking/Photon Rigidbody View")]
     public class PhotonRigidbodyView : MonoBehaviourPun, IPunObservable
@@ -83,7 +82,7 @@ namespace Photon.Pun
                         this.m_Body.position = this.m_NetworkPosition;
                     }
                 }
-                
+
                 if (this.m_SynchronizeVelocity || this.m_SynchronizeAngularVelocity)
                 {
                     float lag = Mathf.Abs((float)(PhotonNetwork.Time - info.SentServerTime));

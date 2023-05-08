@@ -13,7 +13,7 @@ public struct OwnerObject
     public bool isGameObject;
 }
 
-public class PlayerNetworkManager : MonoBehaviour
+public class PlayerNetworkManager : MonoBehaviourPun
 {
     [Header("Owner Components")]
     [SerializeField] private CharacterController _cc;
@@ -25,26 +25,30 @@ public class PlayerNetworkManager : MonoBehaviour
     [SerializeField] private GameObject _cam;
     [SerializeField] private GameObject _canvas;
 
-    private PhotonView _photonview;
-
-    private IRemoteCallable _currentCallable;
+    private EntityInfo _entityInfo;
+    private IRemoteCallable[] _callableComponents;
 
     [Header("Player setting")]
     private List<OwnerObject> _objectsToEnableOnJoin;
     private TextMeshPro _mainNickName;
 
-    public PhotonView Photonview { get => _photonview; }
+    public PhotonView Photonview { get => photonView; }
 
-    public void RemoteCall(IRemoteCallable callable, params object[] parameters)
+    public void RemoteCall(string callableName, params object[] parameters)
     {
-        _currentCallable = callable;
-        _photonview.RPC("RemoteCallRPC", RpcTarget.All, parameters);
+        photonView.RPC("RemoteCallRPC", RpcTarget.All, callableName, (object)parameters);
     }
 
     [PunRPC]
-    private void RemoteCallRPC(object[] parameters)
+    private void RemoteCallRPC(object callableName, object[] parameters)
     {
-        _currentCallable.RemoteInvoke(parameters);
+        foreach (IRemoteCallable callable in _callableComponents)
+        {
+            if (callable.Name == (string)callableName)
+            {
+                callable.RemoteInvoke(parameters);
+            }
+        }
     }
 
     // Activa todos los componentes activos para el owner
@@ -62,11 +66,16 @@ public class PlayerNetworkManager : MonoBehaviour
 
     private void Start()
     {
-        _photonview = GetComponent<PhotonView>();
-        if (_photonview.IsMine)//soy el cliente maestro
+        if (photonView.IsMine)//soy el cliente maestro
         {
             ActivateOwnerComponents();
             PhotonNetwork.NickName = PlayerPrefs.GetString("nickname");
         }
+        else
+        {
+            this.enabled = false;
+        }
+
+        _callableComponents = GetComponentsInChildren<IRemoteCallable>(true);
     }
 }

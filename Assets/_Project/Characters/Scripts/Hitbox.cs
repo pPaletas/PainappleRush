@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Photon.Pun;
 using UnityEngine;
 
 public enum ForceDirection { Forward, Air }
@@ -12,13 +13,29 @@ public struct HitData
     public EntityInfo info;
 }
 
-public class Hitbox : MonoBehaviour
+public class Hitbox : MonoBehaviour, IRemoteCallable
 {
     [SerializeField] private float _damage = 10f;
     [SerializeField] private int _pushType = 0;
     [SerializeField] private float _force = 100f;
     [SerializeField] private ForceDirection _forceDirection;
     private EntityInfo _playerInfo;
+
+    public string Name => "Hitbox";
+
+    public void RemoteInvoke(object[] parameters)
+    {
+        Hurtbox hurtbox = PhotonNetwork.GetPhotonView((int)parameters[0]).GetComponent<EntityInfo>().Hurtbox.GetComponent<Hurtbox>();
+        HitData newData = new HitData
+        {
+            damage = _damage,
+            pushType = _pushType,
+            force = GetForceDirection() * _force,
+            info = _playerInfo
+        };
+
+        hurtbox.Hurt(newData);
+    }
 
     private Vector3 GetForceDirection()
     {
@@ -43,20 +60,25 @@ public class Hitbox : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (_playerInfo.PlrNetwork.Photonview.IsMine)
+        HitData newData = new HitData
         {
-            HitData newData = new HitData
-            {
-                damage = _damage,
-                pushType = _pushType,
-                force = GetForceDirection() * _force,
-                info = _playerInfo
-            };
+            damage = _damage,
+            pushType = _pushType,
+            force = GetForceDirection() * _force,
+            info = _playerInfo
+        };
 
-            if (other.TryGetComponent<Hurtbox>(out Hurtbox hurtbox) && hurtbox.EntityInfo != _playerInfo)
-            {
-                hurtbox.Hurt(newData);
-            }
+        if (other.TryGetComponent<Hurtbox>(out Hurtbox hurtbox) && hurtbox.EntityInfo != _playerInfo)
+        {
+            // if (_playerInfo.isMultiplayer && _playerInfo.PlrNetwork.photonView.IsMine)
+            // {
+            //     _playerInfo.PlrNetwork.RemoteCall(Name, hurtbox.EntityInfo.PlrNetwork.Photonview.ViewID);
+            // }
+            // else
+            // {
+            hurtbox.EntityInfo.PlrNetwork.photonView.TransferOwnership(_playerInfo.PlrNetwork.photonView.Owner);
+            hurtbox.Hurt(newData);
+            // }
         }
     }
 }

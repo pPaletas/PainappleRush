@@ -18,12 +18,10 @@ public class CharacterMovement : EntityMovement
     {
         base.Update();
 
-        bool isMultiplayer = parentInfo.isMultiplayer;
-
-        if (!isMultiplayer || (parentInfo.PlrNetwork.Photonview.IsMine)) parentInfo.PhysicAnimator.SetBool(anim_isRunning, movementVector.sqrMagnitude != 0f);
+        if (IsSingleOrOwner()) parentInfo.PhysicAnimator.SetBool(anim_isRunning, movementVector.sqrMagnitude != 0f);
         Vector3 finalVector = movementVector + (Vector3.down * 50f);
 
-        if (!isMultiplayer || (parentInfo.PlrNetwork.Photonview.IsMine)) _cc.Move(finalVector * Time.deltaTime);
+        if (IsSingleOrOwner()) _cc.Move(finalVector * Time.deltaTime);
     }
 
     protected override void DashUpdate()

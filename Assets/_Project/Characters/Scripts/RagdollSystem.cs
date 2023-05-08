@@ -16,7 +16,7 @@ public class RagdollSystem : MonoBehaviour
 
     protected EntityInfo entityInfo;
     protected bool isKO = false;
-
+    
     // Stun state
     private bool _isStuned = false;
     private bool _isWakingUp = false;
@@ -60,7 +60,6 @@ public class RagdollSystem : MonoBehaviour
     {
         // entityInfo.PhysicAnimator.SetBool(anim_isRagdoll, false);
         entityInfo.PhysicAnimator.enabled = true;
-        Debug.Log(234);
     }
 
     protected void SetJointsActive(bool ko)
