@@ -32,6 +32,8 @@ public class EnemyStateMachine : CharacterInput
 
     private EnemyState _currentState;
     private EntityInfo _entityInfo;
+    private GameObject _vfx_bloodExplosion;
+    private CoinManager _coinManager;
 
     public EntityInfo EntityInfo { get => _entityInfo; }
 
@@ -64,10 +66,24 @@ public class EnemyStateMachine : CharacterInput
     {
         _currentState = new ApproachPlayerState(this);
         _entityInfo = GetComponent<EntityInfo>();
+        _vfx_bloodExplosion = transform.Find("Character/BloodExplosion").gameObject;
+        _coinManager = FindObjectOfType<CoinManager>();
+
     }
 
     private void Update()
     {
         _currentState?.Tick();
+
+        //TEMP
+
+        if (EntityInfo.Health.CurrentHealth <= 0f)
+        {
+            _vfx_bloodExplosion.transform.SetParent(null);
+            _vfx_bloodExplosion.SetActive(true);
+            _coinManager.ImDead(EntityInfo.Char.transform);
+            EntityInfo.gameObject.SetActive(false);
+            GameObject.Destroy(EntityInfo.gameObject);
+        }
     }
 }

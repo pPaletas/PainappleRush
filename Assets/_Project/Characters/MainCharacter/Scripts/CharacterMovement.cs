@@ -7,11 +7,13 @@ public class CharacterMovement : EntityMovement
 {
     [SerializeField] private LayerMask _groundMask;
     private CharacterController _cc;
+    private CoinManager _coinManager;
 
     protected override void Start()
     {
         base.Start();
         _cc = GetComponent<CharacterController>();
+        _coinManager = GameObject.FindObjectOfType<CoinManager>();
     }
 
     protected override void Update()
@@ -46,8 +48,17 @@ public class CharacterMovement : EntityMovement
         }
     }
 
-    private void OnDrawGizmos()
+    private void OnTriggerEnter(Collider other)
     {
-        Gizmos.DrawSphere(transform.position, 0.2f);
+        if (other.CompareTag("LightCoin"))
+        {
+            _coinManager.CoinCollected(0);
+            Destroy(other.gameObject);
+        }
+        else if (other.CompareTag("HeavyCoin"))
+        {
+            _coinManager.CoinCollected(1);
+            Destroy(other.gameObject);
+        }
     }
 }
