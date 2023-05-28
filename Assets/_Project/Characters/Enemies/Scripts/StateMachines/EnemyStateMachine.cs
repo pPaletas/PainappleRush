@@ -32,6 +32,7 @@ public class EnemyStateMachine : CharacterInput
 
     private EnemyState _currentState;
     private EntityInfo _entityInfo;
+    private GameObject _vfx_bloodExplosion;
 
     public EntityInfo EntityInfo { get => _entityInfo; }
 
@@ -60,14 +61,27 @@ public class EnemyStateMachine : CharacterInput
     }
     #endregion
 
+    private void ExplodeOnDeath()
+    {
+        if (EntityInfo.Health.CurrentHealth <= 0f)
+        {
+            _vfx_bloodExplosion.transform.SetParent(null);
+            _vfx_bloodExplosion.SetActive(true);
+            EntityInfo.gameObject.SetActive(false);
+            GameObject.Destroy(EntityInfo.gameObject);
+        }
+    }
+
     private void Awake()
     {
         _currentState = new ApproachPlayerState(this);
         _entityInfo = GetComponent<EntityInfo>();
+        _vfx_bloodExplosion = transform.Find("Character/Pivot/PhysicBody/Armature/Root/Spine/BloodExplosion").gameObject;
     }
 
     private void Update()
     {
         _currentState?.Tick();
+        ExplodeOnDeath();
     }
 }

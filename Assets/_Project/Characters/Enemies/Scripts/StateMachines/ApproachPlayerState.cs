@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class ApproachPlayerState : EnemyState
 {
-    private bool _isLookingForASpace = false;
     private Vector3 _currentAlternativeDestiny;
     private float targetAngle;
     private float currentAngle = 0f;

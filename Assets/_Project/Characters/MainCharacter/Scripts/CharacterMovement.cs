@@ -45,9 +45,4 @@ public class CharacterMovement : EntityMovement
             _cc.Move(Vector3.down * 50f);
         }
     }
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.DrawSphere(transform.position, 0.2f);
-    }
 }
