@@ -7,13 +7,11 @@ public class CharacterMovement : EntityMovement
 {
     [SerializeField] private LayerMask _groundMask;
     private CharacterController _cc;
-    private CoinManager _coinManager;
 
     protected override void Start()
     {
         base.Start();
         _cc = GetComponent<CharacterController>();
-        _coinManager = GameObject.FindObjectOfType<CoinManager>();
     }
 
     protected override void Update()
@@ -45,20 +43,6 @@ public class CharacterMovement : EntityMovement
         if (Physics.CheckSphere(transform.position, 0, _groundMask) && (canMove || canDash))
         {
             _cc.Move(Vector3.down * 50f);
-        }
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("LightCoin"))
-        {
-            _coinManager.CoinCollected(0);
-            Destroy(other.gameObject);
-        }
-        else if (other.CompareTag("HeavyCoin"))
-        {
-            _coinManager.CoinCollected(1);
-            Destroy(other.gameObject);
         }
     }
 }
