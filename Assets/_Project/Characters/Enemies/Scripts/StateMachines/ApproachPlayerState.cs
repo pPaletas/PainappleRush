@@ -8,13 +8,17 @@ public class ApproachPlayerState : EnemyState
 
     public ApproachPlayerState(EnemyStateMachine stateMachine) : base(stateMachine) { }
 
-    public override void Enter() { }
+    public override void Enter()
+    {
+        stateMachine.EntityInfo.PhysicAnimator.SetBool(stateMachine.EntityInfo.AnimIsRunning, true);
+        stateMachine.EntityInfo.Agent.isStopped = false;
+    }
 
     public override void Tick()
     {
+        CheckTransitions();
         Move();
         CheckIfDash();
-        CheckTransitions();
     }
 
     public override void Exit() { }
@@ -24,7 +28,22 @@ public class ApproachPlayerState : EnemyState
         Vector3 from = stateMachine.EntityInfo.Char.transform.position;
         RaycastHit hit;
 
-        bool isSomeoneBlocking = Physics.SphereCast(from, 4f, stateMachine.GetDirectionToPlayer(), out hit, distance, stateMachine.info.avoidanceLayer);
+        Vector3 directionToPlayer = stateMachine.GetDirectionToPlayer();
+        // bool isSomeoneBlocking = Physics.SphereCast(from, 0.5f, directionToPlayer, out hit, distance, stateMachine.defaultMask);
+
+        Collider[] others = Physics.OverlapSphere(from, distance, stateMachine.info.avoidanceLayer);
+        bool isSomeoneBlocking = false;
+
+        foreach (Collider other in others)
+        {
+            float angleDif = Mathf.Acos(Vector3.Dot(directionToPlayer, (other.transform.position - from).normalized)) * Mathf.Rad2Deg;
+
+            if (angleDif <= 30f)
+            {
+                isSomeoneBlocking = true;
+                break;
+            }
+        }
 
         return isSomeoneBlocking;
     }

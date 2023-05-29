@@ -29,7 +29,6 @@ public class EnemyMovement : EntityMovement
         {
             _agent.destination = input.MovementVector;
         }
-        parentInfo.PhysicAnimator.SetBool(anim_isRunning, !_agent.isStopped);
     }
 
     protected override void DashUpdate()

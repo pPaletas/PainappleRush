@@ -5,9 +5,9 @@ public class EnemyRagdoll : RagdollSystem
     protected override void SetUpRagdoll()
     {
         base.SetUpRagdoll();
-        entityInfo.Agent.isStopped = true;
         spine.transform.SetParent(null);
         entityInfo.CharacterCollider.enabled = false;
+        entityInfo.StateMachine.SetState(new StunnedState(entityInfo.StateMachine));
     }
 
     protected override bool WakeUp()
@@ -21,6 +21,8 @@ public class EnemyRagdoll : RagdollSystem
                 SetJointsActive(false);
             }
         }
+        entityInfo.Hurtbox.enabled = true;
+        entityInfo.CharacterCollider.enabled = true;
 
         wakeUpCurrentStunTime -= Time.deltaTime;
 
@@ -37,10 +39,8 @@ public class EnemyRagdoll : RagdollSystem
         entityInfo.Char.transform.forward = fwd;
 
         spine.transform.SetParent(_root);
-        entityInfo.Agent.isStopped = false;
-        entityInfo.CharacterCollider.enabled = true;
-        entityInfo.Hurtbox.enabled = true;
 
         entityInfo.PhysicAnimator.enabled = true;
+        entityInfo.StateMachine.SetState(new ApproachPlayerState(entityInfo.StateMachine));
     }
 }

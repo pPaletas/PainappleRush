@@ -16,8 +16,7 @@ ModelImporter:
     optimizeGameObjects: 0
     removeConstantScaleCurves: 1
     motionNodeName: 
-    rigImportErrors: "Invalid Avatar Rig Configuration. Missing or invalid transform:\n\tRequired
-      human bone 'LeftHand' not found\n"
+    rigImportErrors: 
     rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
@@ -65,7 +64,7 @@ ModelImporter:
         floatParameter: 0
         intParameter: 7
         messageOptions: 0
-      - time: 1
+      - time: 0.7688172
         functionName: HitPointEnded
         data: 
         objectReferenceParameter: {instanceID: 0}

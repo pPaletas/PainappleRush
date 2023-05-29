@@ -60,7 +60,6 @@ public class RagdollSystem : MonoBehaviour
     {
         // entityInfo.PhysicAnimator.SetBool(anim_isRagdoll, false);
         entityInfo.PhysicAnimator.enabled = true;
-        Debug.Log(234);
     }
 
     protected void SetJointsActive(bool ko)

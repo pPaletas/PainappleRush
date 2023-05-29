@@ -10,6 +10,7 @@ internal class GuardState : EnemyState
     {
         stateMachine.EntityInfo.Movement.SetAgent(false);
         _randomTime = Random.Range(stateMachine.info.secondsToAttack.x, stateMachine.info.secondsToAttack.y);
+        stateMachine.EntityInfo.PhysicAnimator.SetBool(stateMachine.EntityInfo.AnimIsRunning, false);
     }
 
     public override void Tick()

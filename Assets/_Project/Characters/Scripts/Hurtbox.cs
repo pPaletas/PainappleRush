@@ -15,6 +15,9 @@ public class Hurtbox : MonoBehaviour
     {
         _health.TakeDamage(hitdata.damage);
 
+        // Ya explotó, ragdoll no funcionará
+        if (_health.CurrentHealth <= 0f) return;
+
         if (hitdata.pushType == 0)
         {
             // _movement.Dash(info.Pivot.forward, 30f, 0.05f);

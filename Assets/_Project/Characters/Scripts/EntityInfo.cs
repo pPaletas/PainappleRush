@@ -27,6 +27,10 @@ public class EntityInfo : MonoBehaviour
     private Health _health;
     private Animator _physicAnimator;
     private Animator _fakeAnimator;
+    private EnemyStateMachine _stateMachine;
+
+    // Animator
+    private int _animIsRunning = Animator.StringToHash("IsRunning");
 
     // Timers
     public Timer DashCooldownTimer { get => _dashCooldownTimer; }
@@ -50,6 +54,10 @@ public class EntityInfo : MonoBehaviour
     public Animator FakeAnimator { get => _fakeAnimator; }
     public CharacterInput Input { get => _input; }
     public CharacterController CharacterController { get => _cc; }
+    public EnemyStateMachine StateMachine { get => _stateMachine; }
+
+    // Animator
+    public int AnimIsRunning { get => _animIsRunning; }
 
     private void Awake()
     {
@@ -75,5 +83,6 @@ public class EntityInfo : MonoBehaviour
         _health = _char.GetComponent<Health>();
         _physicAnimator = _pivot.GetComponentInChildren<Animator>(false);
         _fakeAnimator = GetComponentInChildren<Animator>(false);
+        _stateMachine = GetComponent<EnemyStateMachine>();
     }
 }
