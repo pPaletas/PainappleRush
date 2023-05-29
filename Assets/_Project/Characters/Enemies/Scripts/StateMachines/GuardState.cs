@@ -31,10 +31,6 @@ internal class GuardState : EnemyState
         {
             stateMachine.SetState(new ApproachPlayerState(stateMachine));
         }
-        // else if (_randomTime <= 0f)
-        // {
-        //     stateMachine.SetState(new RushTowardPlayerState(stateMachine));
-        // }
     }
 
     private void RotateTowardsPlayer()
