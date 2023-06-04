@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Health : MonoBehaviour
 {
-    public Action onEntityDied; //TODO: CAMBIAR A EVENTOS DE UNITY
+    public Action onEntityDied;
     [SerializeField] private float _maxHealth = 100f;
 
     private float _currentHealth;

@@ -25,9 +25,14 @@ public class EnemyMovement : EntityMovement
     protected override void Update()
     {
         base.Update();
-        if (_agent.enabled)
+
+        if (_agent.enabled && canMove)
         {
             _agent.destination = input.MovementVector;
+        }
+        else if (!canMove)
+        {
+            _agent.destination = transform.position;
         }
     }
 

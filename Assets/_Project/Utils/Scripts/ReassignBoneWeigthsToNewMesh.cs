@@ -8,12 +8,17 @@ public class ReassignBoneWeigthsToNewMesh : MonoBehaviour
     public Transform newArmature;
     public string rootBoneName = "Hips";
     public bool PressToReassign;
+    public bool PrintCurrentBones;
 
     void Update()
     {
         if (PressToReassign)
             Reassign();
+        if(PrintCurrentBones)
+            PrintAllBones();
+
         PressToReassign = false;
+        PrintCurrentBones = false;
     }
 
     // [ContextMenu("Reassign Bones")]
@@ -40,7 +45,8 @@ public class ReassignBoneWeigthsToNewMesh : MonoBehaviour
         Transform[] children = newArmature.GetComponentsInChildren<Transform>();
 
         for (int i = 0; i < bones.Length; i++)
-            Debug.Log(bones[i].name);
+            if (bones[i] != null) Debug.Log(bones[i].name);
+            else Debug.Log("NULO AAAH!");
 
         for (int i = 0; i < bones.Length; i++)
         {
@@ -53,6 +59,16 @@ public class ReassignBoneWeigthsToNewMesh : MonoBehaviour
         }
 
         rend.bones = bones;
+    }
+
+    private void PrintAllBones()
+    {
+        SkinnedMeshRenderer rend = gameObject.GetComponent<SkinnedMeshRenderer>();
+        Transform[] bones = rend.bones;
+
+        for (int i = 0; i < bones.Length; i++)
+            if (bones[i] != null) Debug.Log(bones[i].name, bones[i].gameObject);
+            else Debug.Log("NULO AAAH!");
     }
 
 }

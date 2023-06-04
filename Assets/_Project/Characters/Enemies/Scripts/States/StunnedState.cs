@@ -9,5 +9,8 @@ public class StunnedState : EnemyState
 
     public override void Tick() { }
 
-    public override void Exit() { }
+    public override void Exit()
+    {
+        stateMachine.EntityInfo.Agent.isStopped = false;
+    }
 }

@@ -21,7 +21,7 @@ public class CharacterMovement : EntityMovement
         parentInfo.PhysicAnimator.SetBool(anim_isRunning, movementVector.sqrMagnitude != 0f);
         Vector3 finalVector = movementVector + (Vector3.down * 50f);
 
-        _cc.Move(finalVector * Time.deltaTime);
+        if (canMove && _cc.enabled) _cc.Move(finalVector * Time.deltaTime);
     }
 
     protected override void DashUpdate()

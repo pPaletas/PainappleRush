@@ -27,14 +27,17 @@ internal class GuardState : EnemyState
 
     private void CheckTransitions()
     {
-        if (stateMachine.GetDistanceFromPlayer() > stateMachine.info.stoppingDistance)
+        if (stateMachine.GetDistanceFromPlayer() > stateMachine.info.stoppingDistance && stateMachine.EntityInfo.PunchComboCooldown.IsStopped)
         {
             stateMachine.SetState(new ApproachPlayerState(stateMachine));
         }
-        // else if (_randomTime <= 0f)
-        // {
-        //     stateMachine.SetState(new RushTowardPlayerState(stateMachine));
-        // }
+        else if (_randomTime <= 0f)
+        {
+            stateMachine.SetState(new RushTowardPlayerState(stateMachine));
+        }
+
+        bool isClose = stateMachine.GetDistanceFromPlayer() <= stateMachine.info.attackRadius;
+        bool isOnSight = Vector3.Angle(stateMachine.EntityInfo.Char.transform.forward, stateMachine.GetDirectionToPlayer()) <= stateMachine.info.attackAngle;
     }
 
     private void RotateTowardsPlayer()
