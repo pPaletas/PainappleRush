@@ -24,13 +24,17 @@ public class EntityInfo : MonoBehaviour
     private EntityMovement _movement;
     private CapsuleCollider _characterCollider;
     private CapsuleCollider _hurtbox;
+    private Hurtbox _hurtboxComponent;
     private Health _health;
     private Animator _physicAnimator;
     private Animator _fakeAnimator;
     private EnemyStateMachine _stateMachine;
+    private PunchCombo _punchCombo;
 
     // Animator
     private int _animIsRunning = Animator.StringToHash("IsRunning");
+    private int _animIsRushing = Animator.StringToHash("IsRushing");
+    private int _animPunch = Animator.StringToHash("Punch");
 
     // Timers
     public Timer DashCooldownTimer { get => _dashCooldownTimer; }
@@ -55,9 +59,13 @@ public class EntityInfo : MonoBehaviour
     public CharacterInput Input { get => _input; }
     public CharacterController CharacterController { get => _cc; }
     public EnemyStateMachine StateMachine { get => _stateMachine; }
+    public PunchCombo PunchCombo { get => _punchCombo; }
 
     // Animator
     public int AnimIsRunning { get => _animIsRunning; }
+    public int AnimIsRushing { get => _animIsRushing; }
+    public int AnimPunch { get => _animPunch; }
+    public Hurtbox HurtboxComponent { get => _hurtboxComponent; }
 
     private void Awake()
     {
@@ -74,6 +82,7 @@ public class EntityInfo : MonoBehaviour
         _input = GetComponent<CharacterInput>();
         _char = transform.Find("Character").gameObject;
         _hurtbox = GetComponentInChildren<Hurtbox>().GetComponent<CapsuleCollider>();
+        _hurtboxComponent = GetComponentInChildren<Hurtbox>();
         _rb = transform.Find("Character").GetComponent<Rigidbody>();
         _ragdoll = transform.Find("Character").GetComponent<RagdollSystem>();
         _agent = transform.Find("Character").GetComponent<NavMeshAgent>();
@@ -84,5 +93,6 @@ public class EntityInfo : MonoBehaviour
         _physicAnimator = _pivot.GetComponentInChildren<Animator>(false);
         _fakeAnimator = GetComponentInChildren<Animator>(false);
         _stateMachine = GetComponent<EnemyStateMachine>();
+        _punchCombo = _char.GetComponent<PunchCombo>();
     }
 }

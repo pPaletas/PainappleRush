@@ -14,8 +14,6 @@ public class EnemyRagdoll : RagdollSystem
     {
         if (entityInfo.Hurtbox.enabled)
         {
-            entityInfo.Hurtbox.enabled = false;
-
             if (isKO)
             {
                 SetJointsActive(false);
@@ -40,7 +38,8 @@ public class EnemyRagdoll : RagdollSystem
 
         spine.transform.SetParent(_root);
 
-        entityInfo.PhysicAnimator.enabled = true;
         entityInfo.StateMachine.SetState(new ApproachPlayerState(entityInfo.StateMachine));
+
+        base.StopRagdoll();
     }
 }

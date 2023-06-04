@@ -26,7 +26,6 @@ public class ApproachPlayerState : EnemyState
     private bool IsSomeoneBlocking(float distance)
     {
         Vector3 from = stateMachine.EntityInfo.Char.transform.position;
-        RaycastHit hit;
 
         Vector3 directionToPlayer = stateMachine.GetDirectionToPlayer();
         // bool isSomeoneBlocking = Physics.SphereCast(from, 0.5f, directionToPlayer, out hit, distance, stateMachine.defaultMask);
@@ -128,17 +127,54 @@ public class ApproachPlayerState : EnemyState
 
     private void CheckIfDash()
     {
+        if (stateMachine.enemyType == EnemyStateMachine.EnemyType.Turtoise) return;
+
+        bool isClose = stateMachine.GetDistanceFromPlayer() <= stateMachine.info.attackRadius;
+        bool isOnSight = Vector3.Angle(stateMachine.EntityInfo.Char.transform.forward, stateMachine.GetDirectionToPlayer()) <= stateMachine.info.attackAngle;
         stateMachine.IsDashing = false;
 
         if (stateMachine.GetDistanceFromPlayer() >= stateMachine.info.distanceToDash && !IsSomeoneBlocking(10f))
         {
             stateMachine.IsDashing = true;
         }
+
+        if (isClose && isOnSight && stateMachine.EntityInfo.PunchComboCooldown.IsStopped)
+        {
+            stateMachine.SetState(new AttackState(stateMachine));
+        }
+    }
+
+    private void RotateTowardsPlayer()
+    {
+        Transform pivot = stateMachine.EntityInfo.Char.transform;
+        Quaternion targetRotation = Quaternion.LookRotation(stateMachine.GetDirectionToPlayer(), Vector3.up);
+        Quaternion currentRotation = pivot.rotation;
+
+        pivot.rotation = Quaternion.Slerp(currentRotation, targetRotation, stateMachine.info.rotationSmoothness * Time.deltaTime);
+    }
+
+    private void CheckIfCanAttack()
+    {
+        bool isClose = stateMachine.GetDistanceFromPlayer() <= stateMachine.info.attackRadius;
+        bool isOnSight = Vector3.Angle(stateMachine.EntityInfo.Char.transform.forward, stateMachine.GetDirectionToPlayer()) <= stateMachine.info.attackAngle;
+
+        if (isClose && !isOnSight)
+        {
+            RotateTowardsPlayer();
+        }
+        else if (isClose && isOnSight)
+        {
+            stateMachine.SetState(new AttackState(stateMachine));
+        }
     }
 
     private void CheckTransitions()
     {
-        if (stateMachine.GetDistanceFromPlayer() <= stateMachine.info.stoppingDistance && !stateMachine.EntityInfo.Movement.Dashing)
+        if (stateMachine.enemyType == EnemyStateMachine.EnemyType.Turtoise)
+        {
+            CheckIfCanAttack();
+        }
+        else if (stateMachine.GetDistanceFromPlayer() <= stateMachine.info.stoppingDistance && !stateMachine.EntityInfo.Movement.Dashing)
         {
             stateMachine.SetState(new GuardState(stateMachine));
         }

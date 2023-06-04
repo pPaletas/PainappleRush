@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class EntityMovement : MonoBehaviour
 {
-    [SerializeField] private float _speed = 5f;
+    [SerializeField] protected float speed = 5f;
     [SerializeField] private float _rotationSmoothness = 15f;
     [Header("Dash")]
     [SerializeField] protected float dashSpeed = 50f;
@@ -57,6 +57,7 @@ public class EntityMovement : MonoBehaviour
             dashCurrentTime = time;
             SetPivotForward(direction);
             dashDirection = direction;
+            Debug.DrawRay(transform.position, direction, Color.yellow, 2f);
             this.enableMovementOnFinish = enableMovementOnFinish;
             canMove = false;
         }
@@ -118,7 +119,7 @@ public class EntityMovement : MonoBehaviour
     // Determina como se va a procesar el input
     protected virtual void ProcessInput()
     {
-        movementVector = input.MovementVector.normalized * _speed;
+        movementVector = input.MovementVector.normalized * speed;
     }
 
     // Actualiza la variable _dashing para que pueda ser interpretada como que el jugador está haciendo dash

@@ -6,6 +6,8 @@ public class RagdollSystem : MonoBehaviour
 {
     [SerializeField] protected float wakeUpTime = 0.1f;
     [SerializeField] private LayerMask groundMask;
+    [SerializeField] private bool isArmatureRoot = false;
+    [SerializeField] protected List<ConfigurableJoint> hardLimbs = new List<ConfigurableJoint>();
 
     protected Rigidbody spine;
     protected List<ConfigurableJoint> limbs = new List<ConfigurableJoint>();
@@ -53,6 +55,8 @@ public class RagdollSystem : MonoBehaviour
     protected virtual void SetUpRagdoll()
     {
         // entityInfo.PhysicAnimator.SetBool(anim_isRagdoll, true);
+        // entityInfo.PhysicAnimator.SetTrigger("Hurt");
+        entityInfo.PhysicAnimator.Play("Idle");
         entityInfo.PhysicAnimator.enabled = false;
     }
     protected virtual bool WakeUp() { return true; }
@@ -60,6 +64,7 @@ public class RagdollSystem : MonoBehaviour
     {
         // entityInfo.PhysicAnimator.SetBool(anim_isRagdoll, false);
         entityInfo.PhysicAnimator.enabled = true;
+        entityInfo.HurtboxComponent.isReceivingDamage = false;
     }
 
     protected void SetJointsActive(bool ko)
@@ -78,6 +83,17 @@ public class RagdollSystem : MonoBehaviour
                 xDrive.positionSpring = !ko ? _rootDrive : 0f;
                 yzDrive.positionSpring = !ko ? _rootDrive : 0f;
             }
+
+            joint.angularXDrive = xDrive;
+            joint.angularYZDrive = xDrive;
+        }
+
+        foreach (ConfigurableJoint joint in hardLimbs)
+        {
+            JointDrive xDrive = joint.angularXDrive;
+            JointDrive yzDrive = joint.angularYZDrive;
+            xDrive.positionSpring = _defaultDrive;
+            yzDrive.positionSpring = _defaultDrive;
 
             joint.angularXDrive = xDrive;
             joint.angularYZDrive = xDrive;
@@ -150,7 +166,8 @@ public class RagdollSystem : MonoBehaviour
 
         if (physicBody != null)
         {
-            _root = transform.Find("Pivot/PhysicBody/Armature/Root").transform;
+            string armaturePath = "Pivot/PhysicBody/Armature";
+            _root = !isArmatureRoot ? transform.Find(armaturePath + "/Root").transform : transform.Find(armaturePath).transform;
             spine = _root.GetChild(0).GetComponent<Rigidbody>();
             limbs.AddRange(_root.GetComponentsInChildren<ConfigurableJoint>());
             _limbsRb.AddRange(_root.GetComponentsInChildren<Rigidbody>());

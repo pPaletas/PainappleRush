@@ -1,12 +1,24 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PunchCombo : MonoBehaviour
 {
+    public event Action<int> punchStarted;
+    public event Action<int> punchEnded;
+    public event Action<int> hitboxStarted;
+    public event Action<int> hitboxEnded;
+    public event Action comboTerminated;
+
+    [SerializeField] private bool isOnePunch = false;
+    [SerializeField] private bool _isEnemy = false;
     [SerializeField] private float _dashSpeed = 50f;
     [SerializeField] private float _dashTime = 0.2f;
+    [HideInInspector] public bool canPunch = true;
     [HideInInspector] public bool isPunching = false;
+    private bool _isInCombo = false;
+
 
     // Self
     private EntityMovement _movement;
@@ -20,12 +32,22 @@ public class PunchCombo : MonoBehaviour
     private GameObject _sweepHitbox;
     private GameObject _dashPunchHitbox;
     private GameObject _dashHitbox;
-    private bool _isInCombo = false;
 
     // Animator
     private int _animPunchHash = Animator.StringToHash("Punch");
     private int _animDashPunch = Animator.StringToHash("DashPunch");
     private int _animInComboHash = Animator.StringToHash("IsInCombo");
+    private Hurtbox _hurtbox;
+
+    public bool IsInCombo { get => _isInCombo; }
+
+    public void ResetCombo()
+    {
+        isPunching = false;
+        _anim.ResetTrigger(_animPunchHash);
+        _parentInfo.PunchComboCooldown.StartTimer();
+        SetMovement(true);
+    }
 
     private void ReadInput()
     {
@@ -37,7 +59,7 @@ public class PunchCombo : MonoBehaviour
 
     private void TriggerPunch()
     {
-        if (_parentInfo.PunchComboCooldown.IsStopped && !_movement.Dashing)
+        if (canPunch && _parentInfo.PunchComboCooldown.IsStopped && !_movement.Dashing && !_parentInfo.HurtboxComponent.isReceivingDamage)
         {
             _anim.SetTrigger(_animPunchHash);
             isPunching = true;
@@ -48,29 +70,40 @@ public class PunchCombo : MonoBehaviour
         }
     }
 
-    private void ResetCombo()
-    {
-        isPunching = false;
-        _anim.ResetTrigger(_animPunchHash);
-        _parentInfo.PunchComboCooldown.StartTimer();
-        SetMovement(true);
-    }
-
     #region Listeners
     private void AnimationStarted(int anim)
     {
         if (anim <= 5)
         {
             SetMovement(false);
-            _movement.SetPivotForward(_input.MovementVector.normalized);
-            if (anim != 5) _movement.Dash(_parentInfo.Pivot.forward, _dashSpeed, _dashTime);
+
+            if (_sweepHitbox != null)
+            {
+                _movement.SetPivotForward(_input.MovementVector.normalized);
+                if (anim != 5) _movement.Dash(_parentInfo.Pivot.forward, _dashSpeed, _dashTime);
+            }
+            else
+            {
+                if (anim != 5) _movement.Dash(transform.forward, _dashSpeed, _dashTime);
+            }
+
+            if (anim == 5)
+                _hurtbox.receiveDamage = false;
         }
+
+        punchStarted?.Invoke(anim);
     }
 
     private void AnimationEnded(int anim)
     {
-        if (anim == 5)
+        if (anim == 5 || (anim == 1 && isOnePunch))
+        {
             ResetCombo();
+            _hurtbox.receiveDamage = true;
+            comboTerminated?.Invoke();
+        }
+
+        punchEnded?.Invoke(anim);
     }
 
     private void HitPointReached(int anim)
@@ -81,24 +114,45 @@ public class PunchCombo : MonoBehaviour
         }
         else if (anim == 5)
         {
-            _sweepHitbox.SetActive(true);
+            if (_sweepHitbox != null) _sweepHitbox.SetActive(true);
+            else _punchHitbox.SetActive(true);
         }
         else if (anim == 6)
         {
-            _dashPunchHitbox.SetActive(true);
+            if (_dashPunchHitbox != null) _dashPunchHitbox.SetActive(true);
         }
         else if (anim == 7)
         {
-            _dashHitbox.SetActive(true);
+            if (_dashHitbox != null) _dashHitbox.SetActive(true);
         }
+
+        hitboxStarted?.Invoke(anim);
     }
 
     private void HitPointEnded(int anim)
     {
         _punchHitbox.SetActive(false);
-        _sweepHitbox.SetActive(false);
-        _dashPunchHitbox.SetActive(false);
-        _dashHitbox.SetActive(false);
+        if (!_isEnemy)
+        {
+            _sweepHitbox.SetActive(false);
+            _dashPunchHitbox.SetActive(false);
+            _dashHitbox.SetActive(false);
+        }
+        hitboxEnded?.Invoke(anim);
+    }
+
+    private void OnHurt()
+    {
+        ResetCombo();
+        comboTerminated?.Invoke();
+
+        _punchHitbox.SetActive(false);
+        if (!_isEnemy)
+        {
+            _sweepHitbox.SetActive(false);
+            _dashPunchHitbox.SetActive(false);
+            _dashHitbox.SetActive(false);
+        }
     }
     #endregion
 
@@ -120,7 +174,7 @@ public class PunchCombo : MonoBehaviour
     private void Awake()
     {
         // Self
-        _movement = GetComponent<CharacterMovement>();
+        _movement = GetComponent<EntityMovement>();
         // Parent
         _parentInfo = GetComponentInParent<EntityInfo>();
         _input = GetComponentInParent<CharacterInput>();
@@ -128,15 +182,25 @@ public class PunchCombo : MonoBehaviour
         // Children
         _animListener = GetComponentInChildren<PunchComboAnimationsListener>();
         _punchHitbox = transform.Find("Pivot/Hitboxes/PunchHitbox").gameObject;
-        _sweepHitbox = transform.Find("Pivot/Hitboxes/SweepHitbox").gameObject;
-        _dashPunchHitbox = transform.Find("Pivot/Hitboxes/DashPunchHitbox").gameObject;
-        _dashHitbox = transform.Find("Pivot/Hitboxes/DashHitbox").gameObject;
+        if (!_isEnemy)
+        {
+
+            _sweepHitbox = transform.Find("Pivot/Hitboxes/SweepHitbox").gameObject;
+            _dashPunchHitbox = transform.Find("Pivot/Hitboxes/DashPunchHitbox").gameObject;
+            _dashHitbox = transform.Find("Pivot/Hitboxes/DashHitbox").gameObject;
+        }
 
         // Animation stuff
         _animListener.onAnimationStarted += AnimationStarted;
         _animListener.onAnimationEnded += AnimationEnded;
         _animListener.onHitPointReach += HitPointReached;
         _animListener.onHitPointEnd += HitPointEnded;
+    }
+
+    private void Start()
+    {
+        _hurtbox = _parentInfo.Hurtbox.GetComponent<Hurtbox>();
+        _hurtbox.hurted += OnHurt;
     }
 
     private void Update()
@@ -151,5 +215,7 @@ public class PunchCombo : MonoBehaviour
         _animListener.onAnimationEnded -= AnimationEnded;
         _animListener.onHitPointReach -= HitPointReached;
         _animListener.onHitPointEnd -= HitPointEnded;
+
+        _hurtbox.hurted -= OnHurt;
     }
 }
