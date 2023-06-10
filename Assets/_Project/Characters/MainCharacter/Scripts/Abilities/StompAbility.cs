@@ -1,9 +1,14 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class StompAbility : AbilityBase
 {
+    [SerializeField] private GameObject _stompVFX;
+    [SerializeField] private AudioSource _inflateSFX;
+    [SerializeField] private AudioSource _deflateSFX;
+    [SerializeField] private AudioSource _stompSFX;
     private EntityInfo _entityInfo;
     private Hurtbox _hurtbox;
 
@@ -25,7 +30,11 @@ public class StompAbility : AbilityBase
     private void OnHitboxStart(int punchIndex)
     {
         if (punchIndex == 8)
+        {
             hitbox.gameObject.SetActive(true);
+            _stompVFX.SetActive(true);
+            _stompSFX.Play();
+        }
     }
 
     private void OnHitboxEnd(int punchIndex)
@@ -44,6 +53,16 @@ public class StompAbility : AbilityBase
             _entityInfo.PunchCombo.canPunch = true;
         }
     }
+
+    private void OnInflate()
+    {
+        if (_inflateSFX != null) _inflateSFX.Play();
+    }
+
+    private void OnDeflate()
+    {
+        if (_deflateSFX != null) _deflateSFX.Play();
+    }
     #endregion
 
     private void Start()
@@ -55,6 +74,8 @@ public class StompAbility : AbilityBase
         _entityInfo.PunchCombo.hitboxStarted += OnHitboxStart;
         _entityInfo.PunchCombo.hitboxEnded += OnHitboxEnd;
         _entityInfo.PunchCombo.punchEnded += OnAnimationEnd;
+        _entityInfo.PunchCombo.inflateStarted += OnInflate;
+        _entityInfo.PunchCombo.deflateStarted += OnDeflate;
     }
 
     private void Update()
@@ -71,5 +92,7 @@ public class StompAbility : AbilityBase
         _entityInfo.PunchCombo.hitboxStarted -= OnHitboxStart;
         _entityInfo.PunchCombo.hitboxEnded -= OnHitboxEnd;
         _entityInfo.PunchCombo.punchEnded -= OnAnimationEnd;
+        _entityInfo.PunchCombo.inflateStarted -= OnInflate;
+        _entityInfo.PunchCombo.deflateStarted -= OnDeflate;
     }
 }

@@ -14,6 +14,7 @@ public struct HitData
 
 public class Hitbox : MonoBehaviour
 {
+    [SerializeField] private string _hitPoolName;
     [SerializeField] private bool _isEnemy = false;
     [SerializeField] private float _damage = 10f;
     [SerializeField] private int _pushType = 0;
@@ -25,6 +26,7 @@ public class Hitbox : MonoBehaviour
     private List<Hurtbox> _currentHurtboxes = new List<Hurtbox>();
 
     private EntityInfo _playerInfo;
+    private ParticlesPool _hitPool;
     private float _timeSinceLastTriggerCheck = 1000f;
 
     private Vector3 GetForceDirection()
@@ -45,8 +47,19 @@ public class Hitbox : MonoBehaviour
         return Vector3.zero;
     }
 
+    private void SpawnHitParticle(Vector3 targetPos)
+    {
+        if (_hitPool == null) return;
+
+        GameObject particle = _hitPool.Pool.Get();
+        particle.transform.position = targetPos;
+
+        particle.SetActive(true);
+    }
+
     private void Awake()
     {
+        _hitPool = GameObject.Find("ParticlePools/" + _hitPoolName).GetComponent<ParticlesPool>();
         _playerInfo = GetComponentInParent<EntityInfo>();
         gameObject.SetActive(false);
     }
@@ -102,7 +115,13 @@ public class Hitbox : MonoBehaviour
         if (isEnemy)
         {
             if (_updateTime == 0)
+            {
                 hurtbox.Hurt(newData);
+                if (newData.damage > 0f)
+                {
+                    SpawnHitParticle(hurtbox.transform.position);
+                }
+            }
             else
             {
                 if (!_currentHurtboxes.Contains(hurtbox))

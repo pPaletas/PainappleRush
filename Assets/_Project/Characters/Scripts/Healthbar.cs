@@ -33,13 +33,12 @@ public class Healthbar : MonoBehaviour
             if (_parent != null) transform.parent.position = _parent.position + _offset;
 
             transform.LookAt(_virtualCam.position, _virtualCam.up);
-        }
 
-        //TEMP
-        if (_health.CurrentHealth <= 0f)
-        {
-            transform.parent.gameObject.SetActive(false);
-            Destroy(transform.parent.gameObject);
+            if (_health.CurrentHealth <= 0f)
+            {
+                transform.parent.gameObject.SetActive(false);
+                Destroy(transform.parent.gameObject);
+            }
         }
     }
 }

@@ -52,6 +52,11 @@ public class RagdollSystem : MonoBehaviour
         wakeUpCurrentStunTime = 2f;
     }
 
+    public void DestroyRoot()
+    {
+        Destroy(spine.gameObject);
+    }
+
     protected virtual void SetUpRagdoll()
     {
         // entityInfo.PhysicAnimator.SetBool(anim_isRagdoll, true);

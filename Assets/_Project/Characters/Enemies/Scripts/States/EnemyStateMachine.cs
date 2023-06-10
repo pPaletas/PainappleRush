@@ -79,6 +79,7 @@ public class EnemyStateMachine : CharacterInput
             _vfx_bloodExplosion.SetActive(true);
             EntityInfo.gameObject.SetActive(false);
             GameObject.Destroy(EntityInfo.gameObject);
+            EntityInfo.Ragdoll.DestroyRoot();
         }
     }
 

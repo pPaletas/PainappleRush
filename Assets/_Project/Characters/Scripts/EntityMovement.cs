@@ -7,6 +7,8 @@ public class EntityMovement : MonoBehaviour
     [Header("Dash")]
     [SerializeField] protected float dashSpeed = 50f;
     [SerializeField] protected float dashTime = 0.2f;
+    [SerializeField] private ParticleSystem _dashVFX;
+    [SerializeField] private AudioSource _dashSFX;
 
     [HideInInspector] public bool canMove = true;
     [HideInInspector] public bool canDash = true;
@@ -52,6 +54,8 @@ public class EntityMovement : MonoBehaviour
     {
         if (!isDashing)
         {
+            if (_dashVFX != null) _dashVFX.Play();
+            if (_dashSFX != null) _dashSFX.Play();
             isDashing = true;
             dashCurrentSpeed = speed;
             dashCurrentTime = time;
@@ -69,7 +73,9 @@ public class EntityMovement : MonoBehaviour
 
     protected virtual void StopDash()
     {
+        if (_dashVFX != null) _dashVFX.Stop();
         isDashing = false;
+        _dashing = false;
         dashCurrentSpeed = 0f;
         dashCurrentTime = 0f;
         dashDirection = Vector3.zero;
@@ -105,7 +111,7 @@ public class EntityMovement : MonoBehaviour
             ProcessInput();
         }
 
-        SetDashingVariable();
+        // SetDashingVariable();
     }
 
     protected virtual void RotateTowardsMovement()
@@ -130,7 +136,7 @@ public class EntityMovement : MonoBehaviour
 
     private void CheckIfCanDash()
     {
-        if (input.IsDashing && _dashCooldown.IsStopped && canDash)
+        if (input.IsDashing && _dashCooldown.IsStopped && canMove)
         {
             // Recordar que el MovementVector de los enemigos, es la posición del jugador
             Vector3 dashDir = usePivot ? input.MovementVector.normalized : (input.MovementVector - transform.position).normalized;

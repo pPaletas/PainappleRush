@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class BarrageAbility : AbilityBase
 {
+    [SerializeField] private GameObject _vfx;
+    [SerializeField] private AudioSource _sfx;
     private EntityInfo _entityInfo;
     private Hurtbox _hurtbox;
 
@@ -25,13 +27,21 @@ public class BarrageAbility : AbilityBase
     private void OnHitboxStart(int punchIndex)
     {
         if (punchIndex == 9)
+        {
+
+            _vfx.SetActive(true);
             hitbox.gameObject.SetActive(true);
+            if (_sfx != null) _sfx.Play();
+        }
     }
 
     private void OnHitboxEnd(int punchIndex)
     {
         if (punchIndex == 9)
+        {
+            if (_sfx != null) _sfx.Stop();
             hitbox.gameObject.SetActive(false);
+        }
     }
 
     private void OnAnimationEnd(int punchIndex)
@@ -42,6 +52,7 @@ public class BarrageAbility : AbilityBase
             _hurtbox.receiveDamage = true;
             _entityInfo.Movement.canDash = true;
             _entityInfo.PunchCombo.canPunch = true;
+            _vfx.SetActive(false);
         }
     }
     #endregion
@@ -62,6 +73,7 @@ public class BarrageAbility : AbilityBase
         if (((PlayerInput)_entityInfo.Input).FireAbility3)
         {
             _entityInfo.PhysicAnimator.SetTrigger(AnimationHash);
+
         }
     }
 

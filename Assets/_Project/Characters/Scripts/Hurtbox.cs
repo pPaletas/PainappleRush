@@ -16,7 +16,7 @@ public class Hurtbox : MonoBehaviour
     private Health _health;
     private EntityMovement _movement;
     private EntityInfo _entityInfo;
-    private GameObject _vfxBlood;
+    private AudioSource _source;
 
     public EntityInfo EntityInfo { get => _entityInfo; }
 
@@ -29,11 +29,13 @@ public class Hurtbox : MonoBehaviour
 
         _health.TakeDamage(hitdata.damage);
 
-
         isReceivingDamage = true;
 
         // Ya explotó, ragdoll no funcionará
-        if (_health.CurrentHealth <= 0f) return;
+        if (_health.CurrentHealth <= 0f)
+        {
+            return;
+        }
 
         Vector3 force = hitdata.force;
 
@@ -43,6 +45,7 @@ public class Hurtbox : MonoBehaviour
         if (hitdata.damage > 0f)
         {
             SpawnBloodParticle(force);
+            _source.Play();
         }
 
         if (hitdata.pushType == 0)
@@ -74,6 +77,7 @@ public class Hurtbox : MonoBehaviour
         _entityInfo = GetComponentInParent<EntityInfo>();
         _health = GetComponentInParent<Health>();
         _movement = GetComponentInParent<EntityMovement>();
+        _source = GetComponent<AudioSource>();
 
         _bloodPool = GameObject.Find("ParticlePools/" + bloodPoolName).GetComponent<ParticlesPool>();
     }

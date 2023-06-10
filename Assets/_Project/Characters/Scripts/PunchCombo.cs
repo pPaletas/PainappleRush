@@ -10,11 +10,20 @@ public class PunchCombo : MonoBehaviour
     public event Action<int> hitboxStarted;
     public event Action<int> hitboxEnded;
     public event Action comboTerminated;
+    public event Action inflateStarted;
+    public event Action deflateStarted;
 
     [SerializeField] private bool isOnePunch = false;
     [SerializeField] private bool _isEnemy = false;
     [SerializeField] private float _dashSpeed = 50f;
     [SerializeField] private float _dashTime = 0.2f;
+
+    [Header("VFX")]
+    [SerializeField] private GameObject _hitGround;
+    [Header("SFX")]
+    [SerializeField] private AudioSource _punchSFX;
+    [SerializeField] private AudioSource _sweepSFX;
+
     [HideInInspector] public bool canPunch = true;
     [HideInInspector] public bool isPunching = false;
     private bool _isInCombo = false;
@@ -111,10 +120,16 @@ public class PunchCombo : MonoBehaviour
         if (anim < 5)
         {
             _punchHitbox.SetActive(true);
+            if (_punchSFX != null) _punchSFX.Play();
         }
         else if (anim == 5)
         {
-            if (_sweepHitbox != null) _sweepHitbox.SetActive(true);
+            if (_sweepHitbox != null)
+            {
+                _sweepHitbox.SetActive(true);
+                _hitGround.SetActive(true);
+                _sweepSFX.Play();
+            }
             else _punchHitbox.SetActive(true);
         }
         else if (anim == 6)
@@ -153,6 +168,16 @@ public class PunchCombo : MonoBehaviour
             _dashPunchHitbox.SetActive(false);
             _dashHitbox.SetActive(false);
         }
+    }
+
+    private void OnInflate()
+    {
+        inflateStarted?.Invoke();
+    }
+
+    private void OnDeflate()
+    {
+        deflateStarted?.Invoke();
     }
     #endregion
 
@@ -195,6 +220,8 @@ public class PunchCombo : MonoBehaviour
         _animListener.onAnimationEnded += AnimationEnded;
         _animListener.onHitPointReach += HitPointReached;
         _animListener.onHitPointEnd += HitPointEnded;
+        _animListener.onInflateStart += OnInflate;
+        _animListener.onDeflateStart += OnDeflate;
     }
 
     private void Start()
@@ -215,6 +242,8 @@ public class PunchCombo : MonoBehaviour
         _animListener.onAnimationEnded -= AnimationEnded;
         _animListener.onHitPointReach -= HitPointReached;
         _animListener.onHitPointEnd -= HitPointEnded;
+        _animListener.onInflateStart -= OnInflate;
+        _animListener.onDeflateStart -= OnDeflate;
 
         _hurtbox.hurted -= OnHurt;
     }

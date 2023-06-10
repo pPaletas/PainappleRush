@@ -30,13 +30,6 @@ public class ParticlesPool : MonoBehaviour
         ParticleSystem psParticles = ps.GetComponent<ParticleSystem>();
         psParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
 
-        //TODO: HACER QUE ESTA VUELTA FUNCIONE XD
-
-        var main = psParticles.main;
-        main.duration = 1;
-        main.startLifetime = 1;
-        main.loop = false;
-
         // This is used to return ParticleSystems to the pool when they have stopped.
         var returnToPool = ps.AddComponent<SwimingParticle>();
         returnToPool.pool = Pool;
