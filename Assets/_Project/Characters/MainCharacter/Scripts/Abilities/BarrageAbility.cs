@@ -28,7 +28,6 @@ public class BarrageAbility : AbilityBase
     {
         if (punchIndex == 9)
         {
-
             _vfx.SetActive(true);
             hitbox.gameObject.SetActive(true);
             if (_sfx != null) _sfx.Play();

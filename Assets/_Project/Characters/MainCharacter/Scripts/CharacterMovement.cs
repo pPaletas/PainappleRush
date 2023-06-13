@@ -22,7 +22,7 @@ public class CharacterMovement : EntityMovement
 
     private void HandleStep(int audio)
     {
-        if(audio == 0)
+        if (audio == 0)
             _audio1.Play();
         else
             _audio2.Play();

@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public class StunnedState : EnemyState
 {
     public StunnedState(EnemyStateMachine stateMachine) : base(stateMachine) { }

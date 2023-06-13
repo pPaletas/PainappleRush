@@ -105,11 +105,8 @@ public class EntityMovement : MonoBehaviour
         CheckIfCanDash();
         DashUpdate();
 
-        if (canMove /*&& !isStunned*/)
-        {
-            if (input.MovementVector != Vector3.zero) RotateTowardsMovement();
-            ProcessInput();
-        }
+        if (input.MovementVector != Vector3.zero && canMove) RotateTowardsMovement();
+        ProcessInput();
 
         // SetDashingVariable();
     }

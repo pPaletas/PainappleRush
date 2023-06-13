@@ -70,11 +70,11 @@ public class PunchCombo : MonoBehaviour
     {
         bool isInComboCooldown = !_parentInfo.PunchComboCooldown.IsStopped;
         bool isReceivingDamage = _parentInfo.HurtboxComponent.isReceivingDamage;
-        bool isInPunchCooldown = _parentInfo.PunchCooldown == null ? false : !_parentInfo.PunchCooldown.IsStopped;
+        // bool isInPunchCooldown = _parentInfo.PunchCooldown == null ? false : !_parentInfo.PunchCooldown.IsStopped;
 
-        if (canPunch && !isInComboCooldown && !_movement.Dashing && !isReceivingDamage && !isInPunchCooldown)
+        if (canPunch && !isInComboCooldown && !_movement.Dashing && !isReceivingDamage /*&& !isInPunchCooldown*/)
         {
-            if (_parentInfo.PunchCooldown != null) _parentInfo.PunchCooldown.StartTimer();
+            // if (_parentInfo.PunchCooldown != null) _parentInfo.PunchCooldown.StartTimer();
             _anim.SetTrigger(_animPunchHash);
             isPunching = true;
         }
@@ -149,7 +149,7 @@ public class PunchCombo : MonoBehaviour
         hitboxStarted?.Invoke(anim);
     }
 
-    private void HitPointEnded(int anim)
+    private void HitPointEnded(int anim = 0)
     {
         _punchHitbox.SetActive(false);
         if (!_isEnemy)
@@ -196,7 +196,10 @@ public class PunchCombo : MonoBehaviour
     private void CheckIfStillInState()
     {
         if (_isInCombo && !_anim.GetBool(_animInComboHash))
+        {
+            HitPointEnded();
             ResetCombo();
+        }
 
         _isInCombo = _anim.GetBool(_animInComboHash);
     }

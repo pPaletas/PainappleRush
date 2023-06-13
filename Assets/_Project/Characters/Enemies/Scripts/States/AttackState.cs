@@ -31,14 +31,14 @@ public class AttackState : EnemyState
         stateMachine.IsPunching = false;
         stateMachine.EntityInfo.PhysicAnimator.ResetTrigger(stateMachine.EntityInfo.AnimPunch);
 
-        if (stateMachine.enemyType != EnemyStateMachine.EnemyType.Turtoise)
-        {
-            stateMachine.SetState(new GuardState(stateMachine));
-        }
-        else
-        {
-            stateMachine.SetState(new ApproachPlayerState(stateMachine));
-        }
+        // if (stateMachine.enemyType != EnemyStateMachine.EnemyType.Turtoise)
+        // {
+        stateMachine.SetState(new GuardState(stateMachine));
+        // }
+        // else
+        // {
+        //     stateMachine.SetState(new ApproachPlayerState(stateMachine));
+        // }
     }
 
     private void OnPunchStarted(int punchIndex)
@@ -52,13 +52,13 @@ public class AttackState : EnemyState
 
     private void OnComboEnded(int punchIndex)
     {
-        if (punchIndex == 5 && stateMachine.enemyType != EnemyStateMachine.EnemyType.Turtoise)
+        if (punchIndex == 5 /*&& stateMachine.enemyType != EnemyStateMachine.EnemyType.Turtoise*/)
         {
             stateMachine.SetState(new GuardState(stateMachine));
-        }
-        else
-        {
-            stateMachine.SetState(new ApproachPlayerState(stateMachine));
+        // }
+        // else
+        // {
+        //     stateMachine.SetState(new ApproachPlayerState(stateMachine));
         }
     }
 }

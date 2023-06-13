@@ -13,6 +13,7 @@ public class AbilityBase : MonoBehaviour
 
     [Header("Ability Presentation")]
     [SerializeField] private GameObject _presentationObject;
+    [SerializeField] private ParticleSystem _shineParticle;
     [SerializeField] private float _presentationTime = 2f;
 
     [HideInInspector] public string assignedButtonName;
@@ -22,6 +23,7 @@ public class AbilityBase : MonoBehaviour
     public void PresentateAbility(Button btnToActivate)
     {
         _presentationObject.SetActive(true);
+        _shineParticle.gameObject.SetActive(true);
         StartCoroutine(DisablePresentation(btnToActivate));
     }
 
@@ -29,7 +31,8 @@ public class AbilityBase : MonoBehaviour
     {
         yield return new WaitForSeconds(_presentationTime);
 
-        _presentationObject.SetActive(false);
+        _presentationObject.GetComponent<Animator>().SetTrigger("Close");
+        _shineParticle.Stop();
         btnToActivate.gameObject.SetActive(true);
     }
 

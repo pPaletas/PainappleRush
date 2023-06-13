@@ -4,9 +4,14 @@ internal class RushTowardPlayerState : EnemyState
 {
     public RushTowardPlayerState(EnemyStateMachine stateMachine) : base(stateMachine) { }
 
+    int animHash;
+
     public override void Enter()
     {
-        stateMachine.EntityInfo.PhysicAnimator.SetBool(stateMachine.EntityInfo.AnimIsRushing, true);
+        bool isPolice = stateMachine.enemyType == EnemyStateMachine.EnemyType.Police;
+        animHash = isPolice ? stateMachine.EntityInfo.AnimIsRushing : stateMachine.EntityInfo.AnimIsRunning;
+
+        stateMachine.EntityInfo.PhysicAnimator.SetBool(animHash, true);
         stateMachine.EntityInfo.Agent.isStopped = false;
         stateMachine.EntityInfo.Agent.speed = 15f;
     }
@@ -21,7 +26,7 @@ internal class RushTowardPlayerState : EnemyState
     }
     public override void Exit()
     {
-        stateMachine.EntityInfo.PhysicAnimator.SetBool(stateMachine.EntityInfo.AnimIsRushing, false);
+        stateMachine.EntityInfo.PhysicAnimator.SetBool(animHash, false);
         stateMachine.EntityInfo.Agent.speed = 10f;
     }
 

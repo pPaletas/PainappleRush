@@ -27,11 +27,11 @@ internal class GuardState : EnemyState
 
     private void CheckTransitions()
     {
-        if (stateMachine.GetDistanceFromPlayer() > stateMachine.info.stoppingDistance && stateMachine.EntityInfo.PunchComboCooldown.IsStopped)
+        if (stateMachine.GetDistanceFromPlayer() > stateMachine.info.stoppingDistance)
         {
             stateMachine.SetState(new ApproachPlayerState(stateMachine));
         }
-        else if (_randomTime <= 0f)
+        else if (_randomTime <= 0f && stateMachine.EntityInfo.PunchComboCooldown.IsStopped)
         {
             stateMachine.SetState(new RushTowardPlayerState(stateMachine));
         }

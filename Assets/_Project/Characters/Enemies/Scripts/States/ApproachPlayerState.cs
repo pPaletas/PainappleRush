@@ -16,12 +16,19 @@ public class ApproachPlayerState : EnemyState
 
     public override void Tick()
     {
+        FixStuckGlitch();
         CheckTransitions();
         Move();
         CheckIfDash();
     }
 
     public override void Exit() { }
+
+    private void FixStuckGlitch()
+    {
+        if (stateMachine.EntityInfo.Agent.isStopped)
+            stateMachine.EntityInfo.Agent.isStopped = false;
+    }
 
     private bool IsSomeoneBlocking(float distance)
     {
@@ -172,11 +179,12 @@ public class ApproachPlayerState : EnemyState
 
     private void CheckTransitions()
     {
-        if (stateMachine.enemyType == EnemyStateMachine.EnemyType.Turtoise)
-        {
-            CheckIfCanAttack();
-        }
-        else if (stateMachine.GetDistanceFromPlayer() <= stateMachine.info.stoppingDistance && !stateMachine.EntityInfo.Movement.Dashing)
+        // if (stateMachine.enemyType == EnemyStateMachine.EnemyType.Turtoise)
+        // {
+        //     // CheckIfCanAttack();
+        //     // stateMachine.SetState(new GuardState(stateMachine));
+        // }
+        if (stateMachine.GetDistanceFromPlayer() <= stateMachine.info.stoppingDistance && !stateMachine.EntityInfo.Movement.Dashing)
         {
             stateMachine.SetState(new GuardState(stateMachine));
         }

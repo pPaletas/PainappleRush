@@ -46,7 +46,12 @@ public class AbilitySystem : MonoBehaviour
 
     private void OnGameStateChanged(GameState state)
     {
-        if (state == GameState.Intermission && GameplayManager.Instance.CurrentWave == _newAbilityWaves[0] + 1)
+        //Si ya tiene todas las habilidades, no necesita mas
+        if (_unlockedAbilities > 2) return;
+
+        bool isRightWave = GameplayManager.Instance.CurrentWave == _newAbilityWaves[_unlockedAbilities] + 1;
+
+        if (state == GameState.Intermission && isRightWave)
         {
             PresentNewAbility();
         }

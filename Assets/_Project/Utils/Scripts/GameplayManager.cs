@@ -11,8 +11,13 @@ public class GameplayManager : MonoBehaviour
 
     public event Action<GameState> gameStateChanged;
 
+    [SerializeField] private List<GameObject> _instructions = new List<GameObject>();
     [SerializeField] private int _intermissionTime = 5;
     [SerializeField] private int _waveTime = 60;
+
+    // Instructions
+    private bool _givingInstructions = true;
+    private int _currentInstruction = 0;
 
     // This will change everytime state changes
     private GameState _currentState = GameState.Intermission;
@@ -22,6 +27,8 @@ public class GameplayManager : MonoBehaviour
     private int _currentWave = 1;
     private float _currentStateTime = 0f;
 
+    private bool gameOver = false;
+
     public int CurrentWave { get => _currentWave; }
     public GameState CurrentState { get => _currentState; }
     public int CurrentStateTime { get => (int)_currentStateTime; }
@@ -29,6 +36,8 @@ public class GameplayManager : MonoBehaviour
 
     public void StartNextWave()
     {
+        if (gameOver) return;
+
         _currentWave++;
 
         _currentState = GameState.Intermission;
@@ -36,6 +45,32 @@ public class GameplayManager : MonoBehaviour
         _currentMaxTime = _intermissionTime;
 
         gameStateChanged?.Invoke(_currentState);
+    }
+
+    private void NextInstruction()
+    {
+        bool touchedScreen = false;
+
+#if UNITY_ANDROID && !UNITY_EDITOR
+        touchedScreen = Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began;
+#else
+        touchedScreen = Input.GetMouseButtonDown(0);
+#endif
+
+        if (touchedScreen)
+        {
+            if (_currentInstruction + 1 < _instructions.Count)
+            {
+                _instructions[_currentInstruction].SetActive(false);
+                _currentInstruction++;
+                _instructions[_currentInstruction].SetActive(true);
+            }
+            else
+            {
+                _instructions[_currentInstruction].transform.parent.gameObject.SetActive(false);
+                _givingInstructions = false;
+            }
+        }
     }
 
     private void TickTimer()
@@ -61,6 +96,7 @@ public class GameplayManager : MonoBehaviour
         {
             _currentState = GameState.GameOver;
             _currentMaxTime = 1000000f;
+            gameOver = true;
         }
 
         gameStateChanged?.Invoke(_currentState);
@@ -74,6 +110,11 @@ public class GameplayManager : MonoBehaviour
 
     private void Update()
     {
-        TickTimer();
+        NextInstruction();
+
+        if (!_givingInstructions && !gameOver)
+        {
+            TickTimer();
+        }
     }
 }
