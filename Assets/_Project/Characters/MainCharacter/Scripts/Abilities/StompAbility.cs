@@ -80,7 +80,7 @@ public class StompAbility : AbilityBase
 
     private void Update()
     {
-        if (((PlayerInput)_entityInfo.Input).FireAbility1)
+        if (((PlayerInput)_entityInfo.Input).FireAbility3)
         {
             _entityInfo.PhysicAnimator.SetTrigger(AnimationHash);
         }

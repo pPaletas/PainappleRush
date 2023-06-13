@@ -42,6 +42,8 @@ internal class GuardState : EnemyState
 
     private void RotateTowardsPlayer()
     {
+        if (stateMachine.GetDirectionToPlayer() == Vector3.zero) return;
+
         Transform pivot = stateMachine.EntityInfo.Char.transform;
         Quaternion targetRotation = Quaternion.LookRotation(stateMachine.GetDirectionToPlayer(), Vector3.up);
         Quaternion currentRotation = pivot.rotation;

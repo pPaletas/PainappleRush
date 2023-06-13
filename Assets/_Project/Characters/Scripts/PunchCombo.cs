@@ -68,8 +68,13 @@ public class PunchCombo : MonoBehaviour
 
     private void TriggerPunch()
     {
-        if (canPunch && _parentInfo.PunchComboCooldown.IsStopped && !_movement.Dashing && !_parentInfo.HurtboxComponent.isReceivingDamage)
+        bool isInComboCooldown = !_parentInfo.PunchComboCooldown.IsStopped;
+        bool isReceivingDamage = _parentInfo.HurtboxComponent.isReceivingDamage;
+        bool isInPunchCooldown = _parentInfo.PunchCooldown == null ? false : !_parentInfo.PunchCooldown.IsStopped;
+
+        if (canPunch && !isInComboCooldown && !_movement.Dashing && !isReceivingDamage && !isInPunchCooldown)
         {
+            if (_parentInfo.PunchCooldown != null) _parentInfo.PunchCooldown.StartTimer();
             _anim.SetTrigger(_animPunchHash);
             isPunching = true;
         }

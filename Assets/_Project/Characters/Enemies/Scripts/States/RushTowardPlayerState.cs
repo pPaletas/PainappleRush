@@ -27,7 +27,8 @@ internal class RushTowardPlayerState : EnemyState
 
     private void Move()
     {
-        stateMachine.MovementVector = SceneInfo.sceneInfo.PlrCharacter.position;
+        if (SceneInfo.Instance.PlrCharacter == null) return;
+        stateMachine.MovementVector = SceneInfo.Instance.PlrCharacter.position;
     }
 
     private void CheckTransitions()

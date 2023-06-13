@@ -251,7 +251,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _hitPoolName: Hit
   _isEnemy: 1
-  _damage: 4
+  _damage: 2
   _pushType: 0
   _force: 70
   _updateTime: 0
@@ -660,6 +660,7 @@ MonoBehaviour:
   dashSpeed: 30
   dashTime: 0.2
   _dashVFX: {fileID: 0}
+  _dashSFX: {fileID: 0}
   canMove: 1
   canDash: 1
 --- !u!114 &692674742
@@ -697,6 +698,8 @@ MonoBehaviour:
   _dashSpeed: 30
   _dashTime: 0.05
   _hitGround: {fileID: 0}
+  _punchSFX: {fileID: 0}
+  _sweepSFX: {fileID: 0}
   canPunch: 1
   isPunching: 0
 --- !u!1 &6644559624736201496

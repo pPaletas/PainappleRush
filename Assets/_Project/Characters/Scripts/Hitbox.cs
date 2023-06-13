@@ -117,7 +117,7 @@ public class Hitbox : MonoBehaviour
             if (_updateTime == 0)
             {
                 hurtbox.Hurt(newData);
-                if (newData.damage > 0f)
+                if (newData.damage > 0f && hurtbox.receiveDamage)
                 {
                     SpawnHitParticle(hurtbox.transform.position);
                 }

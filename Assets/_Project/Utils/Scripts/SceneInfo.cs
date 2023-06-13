@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SceneInfo : MonoBehaviour
 {
-    public static SceneInfo sceneInfo;
+    public static SceneInfo Instance;
 
     private EntityInfo _plr;
     private Transform _plrCharacter;
@@ -16,8 +16,8 @@ public class SceneInfo : MonoBehaviour
 
     private void Awake()
     {
-        if (sceneInfo == null)
-            sceneInfo = this;
+        if (Instance == null)
+            Instance = this;
 
         _plr = GameObject.FindAnyObjectByType<PlayerInput>().GetComponent<EntityInfo>();
         _plrCharacter = _plr.transform.Find("Character");

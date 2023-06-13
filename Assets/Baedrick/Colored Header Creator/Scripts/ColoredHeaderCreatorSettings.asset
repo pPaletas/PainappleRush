@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d31ccecf16173714483a8de8b6a04b4e, type: 3}
   m_Name: ColoredHeaderCreatorSettings
   m_EditorClassIdentifier: 
-  headerText: MANAGERS
-  headerColor: {r: 0.892673, g: 0, b: 1, a: 1}
+  headerText: AI
+  headerColor: {r: 0.15294117, g: 0.79474974, b: 1, a: 1}
   editorOnly: 1
   textAlignmentOptions: 0
   fontStyleOptions: 0

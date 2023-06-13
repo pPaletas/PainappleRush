@@ -4,15 +4,20 @@ using UnityEngine;
 
 public class FollowTransform : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    private Transform _parent;
+    private Vector3 _offset;
+
+    private void Awake()
     {
-        
+        _parent = transform.parent;
+        _offset = transform.localPosition;
+
+        transform.SetParent(null);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void LateUpdate()
     {
-        
+        // Establece la posición siempre arriba, para evitar que rote cuando salga volando
+        if (_parent != null) transform.position = _parent.position + _offset;
     }
 }

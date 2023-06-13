@@ -70,7 +70,7 @@ public class BarrageAbility : AbilityBase
 
     private void Update()
     {
-        if (((PlayerInput)_entityInfo.Input).FireAbility3)
+        if (((PlayerInput)_entityInfo.Input).FireAbility1)
         {
             _entityInfo.PhysicAnimator.SetTrigger(AnimationHash);
 

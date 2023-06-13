@@ -10,6 +10,7 @@ public class EntityInfo : MonoBehaviour
     private Timer _dashTimer;
     private Timer _punchDashTimer;
     private Timer _punchComboCooldown;
+    private Timer _punchCooldown;
 
     // Transforms
     private Transform _pivot;
@@ -41,6 +42,7 @@ public class EntityInfo : MonoBehaviour
     public Timer DashTimer { get => _dashTimer; }
     public Timer PunchDashTimer { get => _punchDashTimer; }
     public Timer PunchComboCooldown { get => _punchComboCooldown; }
+    public Timer PunchCooldown { get => _punchCooldown; }
 
     // Transforms
     public Transform Pivot { get => _pivot; }
@@ -74,6 +76,9 @@ public class EntityInfo : MonoBehaviour
         _dashTimer = transform.Find("Timers/DashTime").GetComponent<Timer>();
         _punchDashTimer = transform.Find("Timers/PunchDashTime").GetComponent<Timer>();
         _punchComboCooldown = transform.Find("Timers/PunchComboCooldown").GetComponent<Timer>();
+
+        if (transform.Find("Timers/PunchCooldown") != null)
+            _punchCooldown = transform.Find("Timers/PunchCooldown").GetComponent<Timer>();
 
         // Transforms
         _pivot = transform.Find("Character/Pivot");
