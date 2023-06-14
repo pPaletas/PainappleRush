@@ -139,13 +139,25 @@ public class RagdollSystem : MonoBehaviour
         }
     }
 
+    private bool IsOnGround()
+    {
+        Ray ray = new Ray(spine.position + Vector3.up * 0.2f, Vector3.down);
+
+        if (Physics.Raycast(ray, 2f, groundMask))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     private void UpdateRagdollState()
     {
         if (_isStuned)
         {
             _stunCurrentStunTime -= Time.deltaTime;
 
-            if (_stunCurrentStunTime <= 0f && entityInfo)
+            if (_stunCurrentStunTime <= 0f && entityInfo && IsOnGround())
             {
                 _isWakingUp = true;
                 _isStuned = false;

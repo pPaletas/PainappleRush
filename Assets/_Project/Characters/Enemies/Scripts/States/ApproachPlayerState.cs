@@ -28,6 +28,9 @@ public class ApproachPlayerState : EnemyState
     {
         if (stateMachine.EntityInfo.Agent.isStopped)
             stateMachine.EntityInfo.Agent.isStopped = false;
+
+        if (!stateMachine.EntityInfo.Movement.canMove)
+            stateMachine.EntityInfo.Movement.canMove = true;
     }
 
     private bool IsSomeoneBlocking(float distance)

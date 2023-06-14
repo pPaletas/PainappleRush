@@ -23,6 +23,11 @@ public class Hitbox : MonoBehaviour
     private float _updateTime = 0f;
     [SerializeField] private ForceDirection _forceDirection;
 
+    [Header("Relative Force")]
+    [SerializeField] private bool _applyRelativeForce = false;
+    [SerializeField] private float _hitboxLength = 0f;
+    [SerializeField, Range(0f, 1f)] private float _minForceMultiplier = 0.1f;
+
     private List<Hurtbox> _currentHurtboxes = new List<Hurtbox>();
 
     private EntityInfo _playerInfo;
@@ -76,8 +81,8 @@ public class Hitbox : MonoBehaviour
                 {
                     damage = _damage,
                     pushType = _pushType,
-                    force = GetForceDirection() * _force,
-                    info = _playerInfo
+                    info = _playerInfo,
+                    force = GetForceDirection() * _force
                 };
 
                 foreach (Hurtbox hurtbox in _currentHurtboxes)
@@ -102,7 +107,6 @@ public class Hitbox : MonoBehaviour
         {
             damage = _damage,
             pushType = _pushType,
-            force = GetForceDirection() * _force,
             info = _playerInfo
         };
 
@@ -114,8 +118,30 @@ public class Hitbox : MonoBehaviour
 
         if (isEnemy)
         {
+
             if (_updateTime == 0)
             {
+                Vector3 dir = GetForceDirection();
+                float force = _force;
+
+                // Aplica force based on distance
+                if (_applyRelativeForce)
+                {
+                    Vector3 pivotPos = _playerInfo.Pivot.transform.position;
+
+                    Vector3 dif = hurtbox.transform.position - pivotPos;
+                    // En realidad es la diferencia entre la posicion del jugador, y la posicion proyectada
+                    Vector3 projectedPos = Vector3.Project(dif, dir);
+
+                    float projectedMagnitude = (projectedPos).magnitude;
+                    float forceMultiplier = (_hitboxLength - projectedMagnitude) / _hitboxLength;
+                    forceMultiplier = Mathf.Clamp(forceMultiplier, _minForceMultiplier, _force);
+
+                    force *= forceMultiplier;
+                }
+
+                newData.force = dir * force;
+
                 hurtbox.Hurt(newData);
                 if (newData.damage > 0f && hurtbox.receiveDamage)
                 {
