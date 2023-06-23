@@ -10013,7 +10013,7 @@ MonoBehaviour:
   - {fileID: 99666357}
   - {fileID: 1237218179}
   _intermissionTime: 5
-  _waveTime: 120
+  _waveTime: 180
 --- !u!1001 &665839768
 PrefabInstance:
   m_ObjectHideFlags: 0
