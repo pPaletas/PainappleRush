@@ -100,7 +100,6 @@ public class Hitbox : MonoBehaviour
         }
     }
 
-
     private void OnTriggerEnter(Collider other)
     {
         HitData newData = new HitData
@@ -114,46 +113,40 @@ public class Hitbox : MonoBehaviour
 
         if (!hasHurtbox) return;
 
-        bool isEnemy = !_isEnemy ? hurtbox.EntityInfo != _playerInfo : hurtbox.EntityInfo.Agent == null;
-
-        if (isEnemy)
+        if (_updateTime == 0)
         {
+            Vector3 dir = GetForceDirection();
+            float force = _force;
 
-            if (_updateTime == 0)
+            // Aplica force based on distance
+            if (_applyRelativeForce)
             {
-                Vector3 dir = GetForceDirection();
-                float force = _force;
+                Vector3 pivotPos = _playerInfo.Pivot.transform.position;
 
-                // Aplica force based on distance
-                if (_applyRelativeForce)
-                {
-                    Vector3 pivotPos = _playerInfo.Pivot.transform.position;
+                Vector3 dif = hurtbox.transform.position - pivotPos;
+                // En realidad es la diferencia entre la posicion del jugador, y la posicion proyectada
+                Vector3 projectedPos = Vector3.Project(dif, dir);
 
-                    Vector3 dif = hurtbox.transform.position - pivotPos;
-                    // En realidad es la diferencia entre la posicion del jugador, y la posicion proyectada
-                    Vector3 projectedPos = Vector3.Project(dif, dir);
+                float projectedMagnitude = (projectedPos).magnitude;
+                float forceMultiplier = (_hitboxLength - projectedMagnitude) / _hitboxLength;
+                forceMultiplier = Mathf.Clamp(forceMultiplier, _minForceMultiplier, _force);
 
-                    float projectedMagnitude = (projectedPos).magnitude;
-                    float forceMultiplier = (_hitboxLength - projectedMagnitude) / _hitboxLength;
-                    forceMultiplier = Mathf.Clamp(forceMultiplier, _minForceMultiplier, _force);
-
-                    force *= forceMultiplier;
-                }
-
-                newData.force = dir * force;
-
-                hurtbox.Hurt(newData);
-                if (newData.damage > 0f && hurtbox.receiveDamage)
-                {
-                    SpawnHitParticle(hurtbox.transform.position);
-                }
+                force *= forceMultiplier;
             }
-            else
+
+            newData.force = dir * force;
+
+            hurtbox.Hurt(newData);
+            if (newData.damage > 0f && hurtbox.receiveDamage)
             {
-                if (!_currentHurtboxes.Contains(hurtbox))
-                {
-                    _currentHurtboxes.Add(hurtbox);
-                }
+                SpawnHitParticle(hurtbox.transform.position);
+            }
+        }
+        else
+        {
+            if (!_currentHurtboxes.Contains(hurtbox))
+            {
+                _currentHurtboxes.Add(hurtbox);
             }
         }
     }

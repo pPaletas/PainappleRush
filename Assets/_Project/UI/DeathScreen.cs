@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class DeathScreen : MonoBehaviour
 {
@@ -15,13 +16,9 @@ public class DeathScreen : MonoBehaviour
     private TextMeshProUGUI _text;
     private AudioSource _audio;
 
-    private int _currentSeconds = 10;
+    private bool _canRespawn = false;
 
-    public void ShowDeathScreen()
-    {
-        _audio.Play();
-        StartCoroutine(AsyncShowDeathScreen());
-    }
+    private int _currentSeconds = 10;
 
     private IEnumerator AsyncShowDeathScreen()
     {
@@ -34,6 +31,32 @@ public class DeathScreen : MonoBehaviour
         deathScreenSetVisible?.Invoke();
         yield return new WaitForSeconds(1f);
         _text.gameObject.SetActive(true);
+        _canRespawn = true;
+    }
+
+    private bool GetInputDown()
+    {
+        bool touchedScreen = false;
+
+#if UNITY_ANDROID && !UNITY_EDITOR
+        touchedScreen = Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began;
+#else
+        touchedScreen = Input.GetMouseButtonDown(0);
+#endif
+
+        return touchedScreen;
+    }
+
+    private IEnumerator ChangeToNextScene()
+    {
+        yield return new WaitForSeconds(0.1f);
+        SceneManager.LoadScene("MainMenu");
+    }
+
+    public void ShowDeathScreen()
+    {
+        _audio.Play();
+        StartCoroutine(AsyncShowDeathScreen());
     }
 
     private void Awake()
@@ -41,5 +64,13 @@ public class DeathScreen : MonoBehaviour
         _group = GetComponent<CanvasGroup>();
         _audio = GetComponent<AudioSource>();
         _text = transform.Find("ReviveText").GetComponent<TextMeshProUGUI>();
+    }
+
+    private void Update()
+    {
+        if (GetInputDown())
+        {
+            StartCoroutine(ChangeToNextScene());
+        }
     }
 }

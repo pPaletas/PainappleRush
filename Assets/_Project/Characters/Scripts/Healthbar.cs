@@ -55,7 +55,7 @@ public class Healthbar : MonoBehaviour
             if (_health.CurrentHealth < _lastHealth)
             {
                 _lastHealth = _health.CurrentHealth;
-                _heartAnim.SetTrigger(_animHurt);
+                if (_heartAnim != null) _heartAnim.SetTrigger(_animHurt);
             }
         }
     }

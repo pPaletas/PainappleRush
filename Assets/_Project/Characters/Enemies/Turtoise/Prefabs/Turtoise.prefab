@@ -1672,6 +1672,9 @@ MonoBehaviour:
   _force: 70
   _updateTime: 0
   _forceDirection: 0
+  _hurtboxMask:
+    serializedVersion: 2
+    m_Bits: 8192
   _applyRelativeForce: 0
   _hitboxLength: 0
   _minForceMultiplier: 0.1

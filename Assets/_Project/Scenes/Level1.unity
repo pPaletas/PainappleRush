@@ -24784,16 +24784,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Env_Bush_1 (51)
       objectReference: {fileID: 0}
-    - target: {fileID: 8476150168375450583, guid: 1b26601055a38de46add6f5f4db75b57,
-        type: 3}
-      propertyPath: m_Layer
-      value: 9
-      objectReference: {fileID: 0}
-    - target: {fileID: 8476150168375450583, guid: 1b26601055a38de46add6f5f4db75b57,
-        type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 2147483647
-      objectReference: {fileID: 0}
     - target: {fileID: 9145268262505972077, guid: 1b26601055a38de46add6f5f4db75b57,
         type: 3}
       propertyPath: m_RootOrder
@@ -24836,8 +24826,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9145268262505972077, guid: 1b26601055a38de46add6f5f4db75b57,
         type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9145268262505972077, guid: 1b26601055a38de46add6f5f4db75b57,
+        type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
       value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 9145268262505972077, guid: 1b26601055a38de46add6f5f4db75b57,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1b26601055a38de46add6f5f4db75b57, type: 3}
@@ -33151,6 +33151,86 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3092266582004970603, guid: b16ba90db39d7d4408229c7ebf5e57f7,
+        type: 3}
+      propertyPath: _hurtboxMask.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
+    - target: {fileID: 3092266582167340310, guid: b16ba90db39d7d4408229c7ebf5e57f7,
+        type: 3}
+      propertyPath: _hurtboxMask.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
+    - target: {fileID: 3092266583236256048, guid: b16ba90db39d7d4408229c7ebf5e57f7,
+        type: 3}
+      propertyPath: _hurtboxMask.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
+    - target: {fileID: 7303688968520758705, guid: b16ba90db39d7d4408229c7ebf5e57f7,
+        type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 7303688969004860837, guid: b16ba90db39d7d4408229c7ebf5e57f7,
+        type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 7303688969343344931, guid: b16ba90db39d7d4408229c7ebf5e57f7,
+        type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 7654783144998445373, guid: b16ba90db39d7d4408229c7ebf5e57f7,
+        type: 3}
+      propertyPath: m_Alpha
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7984969627816621041, guid: b16ba90db39d7d4408229c7ebf5e57f7,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7984969627816621043, guid: b16ba90db39d7d4408229c7ebf5e57f7,
+        type: 3}
+      propertyPath: m_text
+      value: Touch to go to menu
+      objectReference: {fileID: 0}
+    - target: {fileID: 7984969628132760774, guid: b16ba90db39d7d4408229c7ebf5e57f7,
+        type: 3}
+      propertyPath: _hurtboxMask.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
+    - target: {fileID: 7984969628132760795, guid: b16ba90db39d7d4408229c7ebf5e57f7,
+        type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 7984969628231596347, guid: b16ba90db39d7d4408229c7ebf5e57f7,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7984969628815321792, guid: b16ba90db39d7d4408229c7ebf5e57f7,
+        type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 7984969628815321794, guid: b16ba90db39d7d4408229c7ebf5e57f7,
+        type: 3}
+      propertyPath: _hurtboxMask.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
+    - target: {fileID: 7984969628875437347, guid: b16ba90db39d7d4408229c7ebf5e57f7,
+        type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 7984969628875437358, guid: b16ba90db39d7d4408229c7ebf5e57f7,
+        type: 3}
+      propertyPath: _hurtboxMask.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
     - target: {fileID: 7984969628988153224, guid: b16ba90db39d7d4408229c7ebf5e57f7,
         type: 3}
       propertyPath: m_RootOrder
@@ -33210,6 +33290,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 7984969629088829497, guid: b16ba90db39d7d4408229c7ebf5e57f7,
+        type: 3}
+      propertyPath: _maxHealth
+      value: 1e+16
+      objectReference: {fileID: 0}
+    - target: {fileID: 7984969629141535622, guid: b16ba90db39d7d4408229c7ebf5e57f7,
+        type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 7984969629637092993, guid: b16ba90db39d7d4408229c7ebf5e57f7,
+        type: 3}
+      propertyPath: _hurtboxMask.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
+    - target: {fileID: 7984969629637092999, guid: b16ba90db39d7d4408229c7ebf5e57f7,
+        type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b16ba90db39d7d4408229c7ebf5e57f7, type: 3}
