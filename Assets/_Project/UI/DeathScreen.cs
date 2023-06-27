@@ -68,7 +68,7 @@ public class DeathScreen : MonoBehaviour
 
     private void Update()
     {
-        if (GetInputDown())
+        if (GetInputDown() && _canRespawn)
         {
             StartCoroutine(ChangeToNextScene());
         }

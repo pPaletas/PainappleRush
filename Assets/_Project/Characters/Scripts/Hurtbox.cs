@@ -3,12 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 public class Hurtbox : MonoBehaviour
 {
     public event Action hurted;
 
     public string bloodPoolName;
+    [Header("Counter")]
+    [SerializeField] private GameObject _counterHitbox;
+    [SerializeField] private GameObject _counterVFX;
+    [SerializeField] private float _counterCooldown = 0.5f;
+    [SerializeField] private Image _punchButton;
+    [SerializeField] private Sprite _punchSprite;
+    [SerializeField] private Sprite _angerSprite;
+
     [HideInInspector] public bool isReceivingDamage = false;
     [HideInInspector] public bool receiveDamage = true;
 
@@ -18,12 +27,20 @@ public class Hurtbox : MonoBehaviour
     private EntityInfo _entityInfo;
     private AudioSource _source;
 
+    // Counter
+    private float _timeSinceLastCounter = 1000f;
+    private int _hitsReceived = 0;
+    private bool _counterAvailable = false;
+    private Coroutine restartCoroutine;
+
     public EntityInfo EntityInfo { get => _entityInfo; }
 
     public void Hurt(HitData hitdata)
     {
         // Si el hurtbox no está habilitado, o es jugador y esta dasheando
         if (!receiveDamage || (_entityInfo.Agent == null && _entityInfo.Movement.Dashing)) return;
+
+        if (_entityInfo.Agent == null) CheckCounter();
 
         hurted?.Invoke();
 
@@ -59,6 +76,38 @@ public class Hurtbox : MonoBehaviour
         }
     }
 
+    public void Counter()
+    {
+        if (_counterAvailable)
+        {
+            _timeSinceLastCounter = 0f;
+            _counterHitbox.SetActive(true);
+            _counterVFX.SetActive(true);
+            receiveDamage = false;
+
+            StartCoroutine(DisableCounterHitbox());
+
+            _counterAvailable = false;
+            _punchButton.sprite = _punchSprite;
+        }
+    }
+
+    private IEnumerator RestartCounter()
+    {
+        yield return new WaitForSeconds(0.5f);
+        _counterAvailable = false;
+        _hitsReceived = 0;
+        _timeSinceLastCounter = 0f;
+        _punchButton.sprite = _punchSprite;
+    }
+
+    private IEnumerator DisableCounterHitbox()
+    {
+        yield return new WaitForSeconds(0.01f);
+        _counterHitbox.SetActive(false);
+        receiveDamage = true;
+    }
+
     private void SpawnBloodParticle(Vector3 force)
     {
         if (_bloodPool == null) return;
@@ -72,6 +121,33 @@ public class Hurtbox : MonoBehaviour
         particle.SetActive(true);
     }
 
+    private void CheckCounter()
+    {
+        if (restartCoroutine != null && !_counterAvailable) StopCoroutine(restartCoroutine);
+
+        _hitsReceived++;
+        bool restCor = true;
+
+        if (_hitsReceived >= 5 && _timeSinceLastCounter >= _counterCooldown)
+        {
+            _timeSinceLastCounter = 0f;
+            _hitsReceived = 0;
+            _counterAvailable = true;
+            _punchButton.sprite = _angerSprite;
+        }
+
+        if (restCor) restartCoroutine = StartCoroutine(RestartCounter());
+        restCor = !_counterAvailable;
+    }
+
+    private void TickCounterCooldown()
+    {
+        if (_timeSinceLastCounter < _counterCooldown)
+        {
+            _timeSinceLastCounter += Time.deltaTime;
+        }
+    }
+
     private void Awake()
     {
         _entityInfo = GetComponentInParent<EntityInfo>();
@@ -80,5 +156,10 @@ public class Hurtbox : MonoBehaviour
         _source = GetComponent<AudioSource>();
 
         _bloodPool = GameObject.Find("ParticlePools/" + bloodPoolName).GetComponent<ParticlesPool>();
+    }
+
+    private void Update()
+    {
+        TickCounterCooldown();
     }
 }

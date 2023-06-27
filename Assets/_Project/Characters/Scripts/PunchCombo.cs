@@ -46,6 +46,8 @@ public class PunchCombo : MonoBehaviour
     private int _animPunchHash = Animator.StringToHash("Punch");
     private int _animDashPunch = Animator.StringToHash("DashPunch");
     private int _animInComboHash = Animator.StringToHash("IsInCombo");
+
+    // Others
     private Hurtbox _hurtbox;
 
     public bool IsInCombo { get => _isInCombo; }
@@ -73,7 +75,8 @@ public class PunchCombo : MonoBehaviour
         bool isReceivingDamage = _parentInfo.HurtboxComponent.isReceivingDamage;
         // bool isInPunchCooldown = _parentInfo.PunchCooldown == null ? false : !_parentInfo.PunchCooldown.IsStopped;
 
-        //TODO: TESTEAR
+        // Siempre intentará hacer counter
+        if (!isAnNPC) { _parentInfo.HurtboxComponent.Counter(); }
 
         if (canPunch && !isInComboCooldown && !_movement.Dashing && !isReceivingDamage /*&& !isInPunchCooldown*/)
         {

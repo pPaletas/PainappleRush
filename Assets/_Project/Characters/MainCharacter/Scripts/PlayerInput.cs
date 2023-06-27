@@ -28,7 +28,7 @@ public class PlayerInput : CharacterInput
     #region Callbacks
     public void OnButtonPress(int buttonType)
     {
-        if (!_canRead || !canRead) return;
+        // if (!_canRead || !canRead) return;
 
         if (buttonType == 0)
         {

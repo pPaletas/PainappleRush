@@ -61,6 +61,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bloodPoolName: PoliceBear
+  _counterHitbox: {fileID: 0}
+  _counterVFX: {fileID: 0}
+  _counterCooldown: 0.5
+  _punchButton: {fileID: 0}
+  _punchSprite: {fileID: 0}
+  _angerSprite: {fileID: 0}
   isReceivingDamage: 0
   receiveDamage: 1
 --- !u!82 &2509234719521900961
@@ -613,10 +619,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 2
+  m_Radius: 1.0612334
+  m_Height: 8.946001
   m_Direction: 1
-  m_Center: {x: 0, y: 1, z: 0}
+  m_Center: {x: -0, y: 5.5269995, z: -0}
 --- !u!54 &6644559624410816054
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -769,7 +775,7 @@ MonoBehaviour:
   enemyType: 0
   info:
     distanceToDash: 20
-    stoppingDistance: 15
+    stoppingDistance: 10
     secondsToAttack: {x: 1, y: 5}
     rotationSmoothness: 5
     avoidanceLayer:

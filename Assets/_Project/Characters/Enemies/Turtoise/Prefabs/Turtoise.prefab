@@ -401,6 +401,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bloodPoolName: Turtoise
+  _counterHitbox: {fileID: 0}
+  _counterVFX: {fileID: 0}
+  _counterCooldown: 0.5
+  _punchButton: {fileID: 0}
+  _punchSprite: {fileID: 0}
+  _angerSprite: {fileID: 0}
   isReceivingDamage: 0
   receiveDamage: 1
 --- !u!82 &905657637591114374
@@ -819,10 +825,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 2.4513822
+  m_Radius: 1.4802773
+  m_Height: 8.765678
   m_Direction: 1
-  m_Center: {x: -0, y: 1.2256911, z: 0}
+  m_Center: {x: -0, y: 5.617161, z: 0}
 --- !u!54 &3186456575925177582
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1672,9 +1678,6 @@ MonoBehaviour:
   _force: 70
   _updateTime: 0
   _forceDirection: 0
-  _hurtboxMask:
-    serializedVersion: 2
-    m_Bits: 8192
   _applyRelativeForce: 0
   _hitboxLength: 0
   _minForceMultiplier: 0.1
