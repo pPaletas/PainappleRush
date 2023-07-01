@@ -195,7 +195,7 @@ public class RagdollSystem : MonoBehaviour
             }
         }
 
-        SetupRigidbodies();
+        // SetupRigidbodies();
     }
 
     private void Update()
