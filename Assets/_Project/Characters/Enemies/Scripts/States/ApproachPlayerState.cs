@@ -121,7 +121,7 @@ public class ApproachPlayerState : EnemyState
 
         stateMachine.MovementVector = SceneInfo.Instance.PlrCharacter.position;
 
-        if (IsSomeoneBlocking(15f))
+        if (false /*IsSomeoneBlocking(15f)*/)
         {
             float angle;
             Vector3 dir = FindSpace(out angle);
